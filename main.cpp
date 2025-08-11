@@ -121,18 +121,30 @@ private:
         Data today;
         tm localTime;
         time_t currentTime = time(0);
-
-        if (localtime_s(&localTime, &currentTime) == 0) {
-            today.year = localTime.tm_year + 1900;
-            today.month = localTime.tm_mon + 1;
-            today.day = localTime.tm_mday;
-        }
-        else {
-            today.year = 0;
-            today.month = 0;
-            today.day = 0;
-        }
-
+#ifdef _WIN32
+	    // Windows code
+	    localtime_s(&localTime, &currentTime);
+	    if (localTime.tm_year != 0) { // Check for a valid result
+		today.year = localTime.tm_year + 1900;
+		today.month = localTime.tm_mon + 1;
+		today.day = localTime.tm_mday;
+	    } else {
+		today.year = 0;
+		today.month = 0;
+		today.day = 0;
+	    }
+#else
+	    // Linux/Unix code
+	    if (localtime_r(&currentTime, &localTime) != NULL) {
+		today.year = localTime.tm_year + 1900;
+		today.month = localTime.tm_mon + 1;
+		today.day = localTime.tm_mday;
+	    } else {
+		today.year = 0;
+		today.month = 0;
+		today.day = 0;
+	    }
+#endif	
         return today;
     }
 
