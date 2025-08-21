@@ -1,185 +1,77 @@
 #include <iostream>
-#include <string>
-#include <ctime>
+#include <stack>
 #include <vector>
-using namespace std;
 
-typedef struct Data Data;
-
-struct Data {
-    unsigned int day;
-    unsigned int month;
-    unsigned int year;
-};
-
-class HeartRates {
+class Towers
+{
 
 public:
 
-    HeartRates(string f_name = "Gor", string l_name = "Melkumyan", Data b_day = {23, 12, 2001}) {
+    Towers(int disks_count = 3)
+    {
+        setDisksCount(disks_count);
+        towerClear(towerLeft);
+        towerClear(towerMiddle);
+        towerClear(towerRight);
 
-        if(!validBirthday(b_day))
-            cout << "INVALID BIRTHDAY DATA" << endl;
-
-        setFirstName(f_name);
-        setLastName(l_name);
-        setBirthday(b_day);
-        
+        towerFill(towerLeft, disks_count);
     }
 
-    void setFirstName(string f_name) {
-       firstName = f_name;
-    }
-    
-    void setLastName(string l_name) {
-        lastName = l_name;
+    void setDisksCount(int disks_count) {
+        disksCount = disks_count;
     }
 
-    void setBirthday(Data b_day) {
+    void displayTowers() const {
 
-        if (!validBirthday(b_day))
-            cout << "INVALID BIRTHDAY DATA" << endl;
+        std::cout << "The Leftmost Tower" << std::endl;
+        if (!towerLeft.size())
+            std::cout << "Is empty";
 
-        birthday.day = b_day.day;
-        birthday.month = b_day.month;
-        birthday.year = b_day.year;
-    }
+        for(int diskSize : towerLeft)
+            std::cout << diskSize << " ";
+        std::cout << std::endl;
 
-    string getFirstName() const{
-        return firstName;
-    }
-    
-    string getLastName() const {
-        return lastName;
-    }
+        std::cout << "The Middle Tower" << std::endl;
+        if (!towerMiddle.size())
+            std::cout << "Is empty";
 
-    Data getBirthday() const{
-        Data b_day;
-        b_day.day = birthday.day;
-        b_day.month = birthday.month;
-        b_day.year = birthday.year;
-        return b_day;
-    }
+        for (int diskSize : towerMiddle)
+            std::cout << diskSize << " ";
+        std::cout << std::endl;
 
-    string dataToString() const{
-        string b_day_str;
-        b_day_str.append(to_string(birthday.day));
-        b_day_str.append("-");
-        b_day_str.append(to_string(birthday.month));
-        b_day_str.append("-");
-        b_day_str.append(to_string(birthday.year));
-        return b_day_str;
-    }
+        std::cout << "The Rightmost Tower" << std::endl;
+        if(!towerRight.size())
+            std::cout << "Is empty";
 
-    unsigned int getMaxiumumHeartRate() const {
-        return 220 - getAge();
-    }
-
-    vector <double> getTargetHeartRate() const {
-        unsigned int max = getMaxiumumHeartRate();
-
-        return {max * 0.5, max * 0.8};
-    }
-
-    unsigned int getAge() const {
-
-        if (!validBirthday(birthday))
-            cout << "INVALID BIRTHDAY DATA" << endl;
-
-        Data today = getTodayData();
-
-        unsigned int age = today.year - birthday.year;
-        if(today.month > birthday.month)
-            return age;
-        else if(today.month < birthday.month)
-            return age - 1;
-        else{
-            if(today.day >= birthday.day)
-                return age;
-            else
-                return age - 1;
-        }
-    }
-    
-    void printInfo() const {
-        cout << "Last Name is " << getLastName() << endl;
-        cout << "First Name is " << getFirstName() << endl;
-        cout << "Birthday Data is " << dataToString() << endl;
-        cout << "Age is " << getAge() << endl;
-        cout << "Max Heart Rate is " << getMaxiumumHeartRate() << endl;
-
-        vector<double> targetRange = getTargetHeartRate();
-        cout << "Target Heart Rate is from " << targetRange[0] << " to " << targetRange[1] << endl;
+        for (int diskSize : towerRight)
+            std::cout << diskSize << " ";
+        std::cout << std::endl;
     }
 
 private:
-    string firstName;
-    string lastName;
-    Data birthday;
 
-    Data getTodayData() const {
-        Data today;
-        tm localTime;
-        time_t currentTime = time(0);
-#ifdef _WIN32
-	    // Windows code
-	    localtime_s(&localTime, &currentTime);
-	    if (localTime.tm_year != 0) { // Check for a valid result
-		today.year = localTime.tm_year + 1900;
-		today.month = localTime.tm_mon + 1;
-		today.day = localTime.tm_mday;
-	    } else {
-		today.year = 0;
-		today.month = 0;
-		today.day = 0;
-	    }
-#else
-	    // Linux/Unix code
-	    if (localtime_r(&currentTime, &localTime) != NULL) {
-		today.year = localTime.tm_year + 1900;
-		today.month = localTime.tm_mon + 1;
-		today.day = localTime.tm_mday;
-	    } else {
-		today.year = 0;
-		today.month = 0;
-		today.day = 0;
-	    }
-#endif	
-        return today;
+    int disksCount;
+    std::vector<int> towerLeft;
+    std::vector<int> towerMiddle;
+    std::vector<int> towerRight;
+
+    void towerClear(std::vector<int>& tower){
+        tower.clear();
     }
 
-    bool validBirthday(Data birthday) const
-    {
-        Data today = getTodayData();
-        //Year
-        if(today.year > birthday.year)
-            return true;
-        else if(today.year < birthday.year)
-            return false;
-        else {
-            //Month    
-            if(today.month > birthday.month)
-                return true;
-            else if(today.month < birthday.month)
-                return false;
-            else{
-                //Day
-                if (today.day >= birthday.day)
-                    return true;
-                else
-                    return false;
-            }
-        }
+    void towerFill(std::vector<int>& tower, int disks_count) {
+        towerClear(tower);
 
-        return false;
+        for (size_t i = 0; i < disks_count; i++)
+            tower.push_back(i + 1);
     }
+
 };
-
 
 int main()
 {
-    HeartRates Person("Vaxoyan", "Vaxo", {8, 8, 2024});
-    Person.printInfo();
+    Towers towers(13);
+    towers.displayTowers();
 
     return 0;
 }
