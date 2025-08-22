@@ -14,6 +14,5 @@ This is a C++ implementation of the classic **Towers of Hanoi** puzzle, inspired
     \`\`\`
 3.  **Run (Debug)**
     \`\`\`bash
-    cd out/Debug
-    ./DeitelTowersOfHanoi.exe
+   out\Debug\DeitelTowersOfHanoi.exe
     \`\`\`
