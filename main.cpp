@@ -1,10 +1,11 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <cassert>
+#include <algorithm>
 
 class Towers
 {
-
 public:
 
     Towers(int disks_count = 3)
@@ -63,7 +64,34 @@ private:
         towerClear(tower);
 
         for (size_t i = 0; i < disks_count; i++)
-            tower.push_back(i + 1);
+            tower.push_back(disks_count - i);
+    }
+
+    bool vectorIsMonotone (std::vector<int> vec) const {
+        for(int i = 1; i < vec.size(); ++i) {
+            if(vec[i - 1] > vec[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    void towersIsValid() const {
+        std::vector<int> temp;
+
+        assert(!vectorIsMonotone(towerLeft) && "Left tower disks are not monotone\n");
+        assert(!vectorIsMonotone(towerMiddle) && "Middle tower disks are not monotone\n");
+        assert(!vectorIsMonotone(towerRight) && "Right tower disks are not monotone\n");
+        
+        temp.insert(temp.end(), towerLeft.begin(), towerLeft.end());
+        temp.insert(temp.end(), towerMiddle.begin(), towerMiddle.end());
+        temp.insert(temp.end(), towerRight.begin(), towerRight.end());
+
+        assert(temp.size() != disksCount && "Incorrect disk count\n");
+
+        sort(temp.begin(), temp.end());
+        for(int i = 0; i < temp.size(); ++i)
+            assert(temp[i] != (i + 1) && "Incorrect tower disks\n");
     }
 
 };

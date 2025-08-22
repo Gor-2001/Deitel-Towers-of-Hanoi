@@ -1,4 +1,5 @@
-*.out
 *.exe
 *.obj
-/.vsa.out
+.vs/
+/bin
+/out
