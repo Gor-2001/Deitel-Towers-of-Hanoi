@@ -5,6 +5,7 @@ Towers::Towers(unsigned int disks_count)
     setDisksCount(disks_count);
     towerFillBasic();
     towersIsValid();
+    cursorPosition = left;
 }
 
 void Towers::displayNum() const {
@@ -16,7 +17,7 @@ void Towers::displayNum() const {
 }
 
 void Towers::displayPic() const {
-    const unsigned int height = disksCount + 12;
+    const unsigned int height = disksCount + 13;
     const unsigned int width = 6 * disksCount + 13;
 
     printCeil(height, width);
@@ -67,6 +68,15 @@ void Towers::printLine(const unsigned int width, const unsigned int level) const
     printString("  #", 1, true);
 }
 
+void Towers::printCursor() const {
+
+    printString("#  ", 1);
+    printString(" ", cursorPosition * (disksCount * 2 + 1) + disksCount - 1);
+    printString("#", 3);
+    printString(" ", (2 - cursorPosition) * (disksCount * 2 + 3) + disksCount - 1);
+    printString("  #", 1, true);
+
+}
 void Towers::printFloor(const unsigned int height, const unsigned int width) const {
 
     printString("#  ", 1);
@@ -76,6 +86,8 @@ void Towers::printFloor(const unsigned int height, const unsigned int width) con
     printString(" ", 2);
     printString("#", 2 * disksCount + 1);
     printString("  #", 1, true);
+
+    printCursor();
 
     printString("#", 1);
     printString(" ", width - 2);
