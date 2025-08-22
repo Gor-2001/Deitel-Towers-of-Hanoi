@@ -1,5 +1,15 @@
+# Ignore Visual Studio cache and configs
+.vs/
+
+# Ignore build artifacts
 *.exe
 *.obj
-.vs/
 /bin
 /out
+
+# Ignore CMake cache and build folders
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build/
