@@ -15,6 +15,7 @@ Towers::Towers(const unsigned int disks_count)
     setUpperDiskSize(0);
     towerFillBasic();
     towersIsValid();
+    displayPic();
 }
 
 void Towers::displayNum() const {

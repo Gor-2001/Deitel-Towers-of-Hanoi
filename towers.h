@@ -39,10 +39,6 @@ public:
 
     // Constructor
     Towers::Towers(const unsigned int disks_count = 10);
-    
-    // Input and output functions
-    void displayNum() const;
-    void displayPic() const;
 
     // Movement functions
     void cursorMoveRight();
@@ -64,6 +60,9 @@ private:
     diskPosition_t diskPosition;
 
     // Input and output functions
+    // Input and output functions
+    void displayNum() const;
+    void displayPic() const;
     void displayTowerNum(std::vector<unsigned int>& tower, std::string& str) const;
 
     void printString(std::string string, const unsigned int count, bool endl) const;

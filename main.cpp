@@ -3,16 +3,9 @@
 
 int main() {
     char ch;
-    bool needsRedraw = true;
     Towers towers(3);
 
     while (true) {
-        if (needsRedraw) {
-            system("cls");
-            towers.displayPic();
-            needsRedraw = false;
-        }
-
         if (_kbhit()) {
             ch = _getch();
 
