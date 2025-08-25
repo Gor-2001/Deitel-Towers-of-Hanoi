@@ -240,6 +240,17 @@ bool Towers::vectorIsMonotone(std::vector<unsigned int> vec) const {
     return true;
 }
 
+bool Towers::winningPosition() const
+{
+    if(upperDiskSize)
+        return false;
+
+    if(tower[0].size() != 0 || tower[1].size() != 0 || tower[2].size() != disksCount)
+        return false;
+    
+    return true;
+}
+
 void Towers::towersIsValid() const {
 
     assert((cursorPosition >= cursorPositionMin && cursorPosition <= cursorPositionMax) && "Cursor Position is invalid");
@@ -326,6 +337,9 @@ void Towers::diskMoveUp()
 void Towers::diskMoveDown()
 {
     if (!upperDiskSize)
+        return;
+
+    if(!tower[cursorPosition].empty() && upperDiskSize > tower[cursorPosition].back())
         return;
 
     if (diskPosition == diskPositionUp)

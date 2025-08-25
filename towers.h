@@ -51,6 +51,9 @@ public:
     void diskMoveUp();
     void diskMoveDown();
 
+    // Validation functions
+    bool winningPosition() const;
+
 private:
 
     // Variables

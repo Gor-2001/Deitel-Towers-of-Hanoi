@@ -4,7 +4,7 @@
 int main() {
     char ch;
     bool needsRedraw = true;
-    Towers towers(15);
+    Towers towers(3);
 
     while (true) {
         if (needsRedraw) {
@@ -17,6 +17,15 @@ int main() {
             ch = _getch();
 
             switch (ch) {
+
+            // Validate
+            case 13:
+                if(towers.winningPosition()){
+                    system("cls");
+                    std::cout << "You Win.\n";
+                    return 0;
+                }
+                break;
 
             // Escape
             case 27:
