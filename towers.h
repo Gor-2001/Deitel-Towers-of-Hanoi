@@ -7,33 +7,74 @@
 #include <algorithm>
 
 #define MAX_DISKS_COUNT 20
-enum cursorPosition_t { left, middle, right };
+
+#define CEIL_HIGH 9
+#define FLOOR_HIGH 4
+
+enum cursorPosition_t 
+{ 
+    cursorPositionMin       = 0, 
+    cursorPositionLeft      = cursorPositionMin, 
+    cursorPositionMiddle    = cursorPositionLeft + 1,
+    cursorPositionRight     = cursorPositionMiddle + 1,
+    cursorPositionMax       = cursorPositionRight,
+};
+
+enum diskPosition_t
+{
+    diskPositionMin     = 0,
+    diskPositionDown    = diskPositionMin,
+    diskPositionUp      = diskPositionDown + 1,
+    diskPositionMax     = diskPositionUp,
+};
+
 class Towers
 {
 public:
 
-    Towers(unsigned int disks_count = 3);
+    // Constructor
+    Towers::Towers(const unsigned int disks_count = 10, const cursorPosition_t cursor_position = cursorPositionLeft);
+    
+    // Input and output functions
     void displayNum() const;
     void displayPic() const;
 
+    void printDisks() const;
+    void printFloor() const;
+    void printCursor() const;
+
+    // Movement functions
+    void cursorMoveRight();
+    void cursorMoveLeft();
+
+    // Get function
+    unsigned int getDisksCount();
+    unsigned int getCursorY();
+
 private:
 
+    // Variables
     unsigned int disksCount;
     std::vector<unsigned int> towerLeft;
     std::vector<unsigned int> towerMiddle;
     std::vector<unsigned int> towerRight;
     cursorPosition_t cursorPosition;
 
+    // Input and output functions
+    void displayTowerNum(std::vector<unsigned int>& tower, std::string& str) const;
+
     void printString(std::string string, const unsigned int count, bool endl) const;
+    void printCeil() const;
     void printDisk(const unsigned int diskWidth) const;
-    void printCeil(const unsigned int height, const unsigned int width) const;
-    void printLine(const unsigned int width, const unsigned int level) const;
-    void printCursor() const;
-    void printFloor(const unsigned int height, const unsigned int width) const;
-    void setDisksCount(unsigned int disks_count);
+
+    // Set functions
+    void setDisksCount(const unsigned int disks_count);
+    void setCursorPosition(const cursorPosition_t cursor_position);
+
     void towersClear();
     void towerFillBasic();
-    void displayTowerNum(std::vector<unsigned int>& tower, std::string& str) const;
+
+    // Validation functions
     bool vectorIsMonotone(std::vector<unsigned int> vec) const;
     void towersIsValid() const;
 
