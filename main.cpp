@@ -1,20 +1,10 @@
-#include <iostream>
 #include <conio.h>
-#include <windows.h>
-
 #include "towers.h"
-
-void gotoxy(int x, int y) {
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
 
 int main() {
     char ch;
     bool needsRedraw = true;
-    Towers towers(15, (cursorPosition_t)0);
+    Towers towers(15);
 
     while (true) {
         if (needsRedraw) {
@@ -27,20 +17,33 @@ int main() {
             ch = _getch();
 
             switch (ch) {
+
+            // Escape
             case 27:
                 system("cls");
                 std::cout << "ESC pressed. Exiting.\n";
                 return 0;
-            case 77:
-                towers.cursorMoveRight();
-                gotoxy(0, towers.getCursorY());
-                towers.printCursor();
+
+            // Move Up
+            case 72:
+                towers.diskMoveUp();
                 break;
+
+            // Move Left
             case 75:
                 towers.cursorMoveLeft();
-                gotoxy(0, towers.getCursorY());
-                towers.printCursor();
                 break;
+
+            // Move Right
+            case 77:
+                towers.cursorMoveRight();
+                break;
+
+            // Move Down
+            case 80:
+                towers.diskMoveDown();
+                break;
+
             default:
                 break;
             }
