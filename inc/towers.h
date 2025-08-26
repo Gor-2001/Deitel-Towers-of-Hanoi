@@ -82,16 +82,18 @@ private:
     void printCeil() const;
 
     void printLevels() const;
-    void printLevel(
+    void printLevelByValues(
         const unsigned int leftDiskWidth,
         const unsigned int middleDiskWidth,
         const unsigned int rightDiskWidth,
         const char diskDelimiter = '#',
-        const char diskCharacter = '*')
-    const;
+        const char diskCharacter = '*') const;
 
     void printUpperDisk() const;
-    void printLevelByIndex(const unsigned int index) const;
+    void printLevelByIndex(
+        const unsigned int index,
+        const char diskDelimiter = '#',
+        const char diskCharacter = '*') const;
 
     void printTowersBases() const;
     void printCursor() const;

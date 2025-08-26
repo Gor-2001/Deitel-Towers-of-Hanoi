@@ -2,8 +2,10 @@
 
 void Game::start() const {
 
-    unsigned int disk_count;
-    gameStartingMode_t game_starting_mode;
+    unsigned int disk_count = 3;
+    gameStartingMode_t game_starting_mode = gameStartingModeBasic;
+
+    system("cls");
 
     //Starting instructions
     std::cout <<
@@ -27,21 +29,13 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while (ch != 'b' && ch != 'r');
+    } while (ch != 'b' && ch != 'r' && ch != 13);
 
     system("cls");
 
-    switch (ch)
-    {
-    case 'b':
-        game_starting_mode = gameStartingModeBasic;
-        break;
-    case 'r':
+    if (ch == 'r')
         game_starting_mode = gameStartingModeRandom;
-        break;
-    default:
-        assert((true) && "Game starting mode is invalid");
-    }
+
 
     // Enter Disk Count
     std::cout <<
@@ -50,10 +44,12 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while (ch > '9' || ch < '1');
+    } while ((ch > '9' || ch < '1') && ch != 13);
 
     system("cls");
-    disk_count = ch - '0';
+
+    if(ch >= '1' && ch <= '9')
+        disk_count = ch - '0';
 
     // Tower Init and start the game
     Towers towers(disk_count, game_starting_mode);

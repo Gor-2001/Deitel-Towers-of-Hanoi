@@ -69,7 +69,7 @@ void Towers::printCeil() const {
     printEmptyLines(CEIL_HIGH - UPPER_DISK_Y - 1);
 }
 
-void Towers::printLevel(
+void Towers::printLevelByValues(
     const unsigned int leftDiskWidth, 
     const unsigned int middleDiskWidth, 
     const unsigned int rightDiskWidth, 
@@ -114,18 +114,8 @@ void Towers::printLevel(
 
 void Towers::printLevels() const {
 
-    unsigned int leftDiskWidth;
-    unsigned int middleDiskWidth;
-    unsigned int rightDiskWidth;
-
-    for (int index = disksCount - 1; index >= 0; --index) {
-
-        leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
-        middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
-        rightDiskWidth = tower[2].size() > index ? tower[2][index] : 0;
-
-        printLevel(leftDiskWidth, middleDiskWidth, rightDiskWidth, '#');
-    }
+    for (int index = disksCount - 1; index >= 0; --index)
+        printLevelByIndex(index);
 }
 
 void Towers::printUpperDisk() const {
@@ -137,26 +127,29 @@ void Towers::printUpperDisk() const {
     
     switch (cursorPosition) {
     case cursorPositionLeft:
-        printLevel(upperDiskSize, 0, 0, ' ');
+        printLevelByValues(upperDiskSize, 0, 0, ' ');
         break;
     case cursorPositionMiddle:
-        printLevel(0, upperDiskSize, 0, ' ');
+        printLevelByValues(0, upperDiskSize, 0, ' ');
         break;
     case cursorPositionRight:
-        printLevel(0, 0, upperDiskSize, ' ');
+        printLevelByValues(0, 0, upperDiskSize, ' ');
         break;
     default:
         assert((true) && "Cursor position is invalid");
     }
 }
 
-void Towers::printLevelByIndex(const unsigned int index) const {
+void Towers::printLevelByIndex(
+    const unsigned int index,
+    const char diskDelimiter,
+    const char diskCharacter) const {
 
     const unsigned int leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
     const unsigned int middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
     const unsigned int rightDiskWidth  = tower[2].size() > index ? tower[2][index] : 0;
     
-    printLevel(leftDiskWidth, middleDiskWidth, rightDiskWidth, '#');
+    printLevelByValues(leftDiskWidth, middleDiskWidth, rightDiskWidth, diskDelimiter, diskCharacter);
 }
 
 void Towers::printCursor() const {
@@ -170,7 +163,7 @@ void Towers::printCursor() const {
 }
 
 void Towers::printTowersBases() const {
-    printLevel(disksCount, disksCount, disksCount, '#', '#');
+    printLevelByValues(disksCount, disksCount, disksCount, '#', '#');
 }
 
 void Towers::printFloor() const {
