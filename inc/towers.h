@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <windows.h>
 
-#define MAX_DISKS_COUNT 20
+#define MAX_DISKS_COUNT 9
 
 #define CEIL_HIGH 9
 #define FLOOR_HIGH 4
@@ -32,13 +32,24 @@ enum diskPosition_t
     diskPositionUp      = diskPositionDown + 1,
     diskPositionMax     = diskPositionUp,
 };
+enum gameStartingMode_t
+{
+    gameStartingModeMin = 0,
+    gameStartingModeBasic = gameStartingModeMin,
+    gameStartingModeRandom = gameStartingModeBasic + 1,
+    gameStartingModeMax = gameStartingModeBasic,
+};
+
 
 class Towers
 {
 public:
 
     // Constructor
-    Towers::Towers(const unsigned int disks_count = 10);
+    Towers::Towers(
+        const unsigned int disks_count = 10,
+        const gameStartingMode_t gameStartingMode = gameStartingModeBasic
+    );
 
     // Movement functions
     void cursorMoveRight();
@@ -48,7 +59,10 @@ public:
     void diskMoveDown();
 
     // Validation functions
-    bool winningPosition() const;
+    bool isWinningPosition() const;
+
+    // Input and output functions
+    void displayTowers() const;
 
 private:
 
@@ -58,24 +72,28 @@ private:
     std::vector<unsigned int> tower[3];
     cursorPosition_t cursorPosition;
     diskPosition_t diskPosition;
+    gameStartingMode_t gameStartingMode;
 
     // Input and output functions
-    // Input and output functions
-    void displayNum() const;
-    void displayPic() const;
-    void displayTowerNum(std::vector<unsigned int>& tower, std::string& str) const;
-
     void printString(std::string string, const unsigned int count, bool endl) const;
-    void printEmptyString(const unsigned int count) const;
+    void printEmptyLines(const unsigned int count) const;
+    void printFullLines(const unsigned int count) const;
 
     void printCeil() const;
 
-    void printDisks() const;
-    void printDisk(const unsigned int diskWidth) const;
+    void printLevels() const;
+    void printLevel(
+        const unsigned int leftDiskWidth,
+        const unsigned int middleDiskWidth,
+        const unsigned int rightDiskWidth,
+        const char diskDelimiter = '#',
+        const char diskCharacter = '*')
+    const;
 
     void printUpperDisk() const;
-    void printLowerDisk() const;
+    void printLevelByIndex(const unsigned int index) const;
 
+    void printTowersBases() const;
     void printCursor() const;
     void printFloor() const;
 
@@ -84,20 +102,27 @@ private:
     void setCursorPosition(const cursorPosition_t cursor_position);
     void setDiskPosition(const diskPosition_t disk_position);
     void setUpperDiskSize(const unsigned int upper_disk_size);
+    void setGameStartingMode(const gameStartingMode_t game_starting_mode);
 
     // Get functions
-    unsigned int getDisksCount();
-    unsigned int getCursorY();
+    unsigned int getDisksCount() const;
+    unsigned int getCursorY() const;
     unsigned int getUpperDiskY();
     unsigned int getLowerDiskY();
 
-    // Value manipulation functions
+    // Towers filling and cleaning functions
     void towersClear();
-    void towerFillBasic();
+    void towerInit();
+    void towerInitBasic();
+    void towerInitRandom();
 
     // Validation functions
     bool vectorIsMonotone(std::vector<unsigned int> vec) const;
     void towersIsValid() const;
+
+    //// Input and output functions
+    //void displayTowersNumFormat() const;
+    //void displayTowerNumFormat(std::vector<unsigned int>& tower, std::string& str) const;
 
 };
 

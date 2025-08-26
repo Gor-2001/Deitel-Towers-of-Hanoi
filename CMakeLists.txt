@@ -7,5 +7,18 @@ project(DeitelTowersOfHanoi LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Define source and include directories
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
+# Find all source files in the 'src' directory
+file(GLOB_RECURSE SOURCE_FILES
+     "${SOURCE_DIR}/*.cpp")
+
 # Add the executable
-add_executable(${PROJECT_NAME} main.cpp "towers.cpp" "towers.h")
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+# Add the include directory so the compiler can find the headers
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${INCLUDE_DIR}
+)
