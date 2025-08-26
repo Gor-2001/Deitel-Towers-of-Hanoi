@@ -129,6 +129,7 @@ bool Game::win(const Towers& towers) const {
 
 
 void Game::help(const Towers& towers) const {
+
     // Clear the screen and display help
     system("cls");
 

@@ -51,6 +51,9 @@ public:
         const gameStartingMode_t gameStartingMode = gameStartingModeBasic
     );
 
+    // Input and output functions
+    void displayTowers() const;
+
     // Movement functions
     void cursorMoveRight();
     void cursorMoveLeft();
@@ -61,8 +64,6 @@ public:
     // Validation functions
     bool isWinningPosition() const;
 
-    // Input and output functions
-    void displayTowers() const;
 
 private:
 
@@ -80,6 +81,7 @@ private:
     void printFullLines(const unsigned int count) const;
 
     void printCeil() const;
+    void printUpperDisk() const;
 
     void printLevels() const;
     void printLevelByValues(
@@ -89,7 +91,6 @@ private:
         const char diskDelimiter = '#',
         const char diskCharacter = '*') const;
 
-    void printUpperDisk() const;
     void printLevelByIndex(
         const unsigned int index,
         const char diskDelimiter = '#',
@@ -110,7 +111,6 @@ private:
     unsigned int getDisksCount() const;
     unsigned int getCursorY() const;
     unsigned int getUpperDiskY();
-    unsigned int getLowerDiskY();
 
     // Towers filling and cleaning functions
     void towersClear();
@@ -121,10 +121,6 @@ private:
     // Validation functions
     bool vectorIsMonotone(std::vector<unsigned int> vec) const;
     void towersIsValid() const;
-
-    //// Input and output functions
-    //void displayTowersNumFormat() const;
-    //void displayTowerNumFormat(std::vector<unsigned int>& tower, std::string& str) const;
 
 };
 

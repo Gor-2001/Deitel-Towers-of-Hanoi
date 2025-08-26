@@ -1,9 +1,7 @@
-#include "game.h"
+#include "hanoi_tower.h"
 
-int main(int argc, char** argv) {
-    
-    Game game;
-    game.start();
+int main() {
 
+    startHanoiGame();
     return 0;
 }
