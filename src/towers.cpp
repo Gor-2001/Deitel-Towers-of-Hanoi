@@ -46,7 +46,6 @@ void Towers::cursorMoveRight() {
         setCursorPosition(cursorPositionRight);
         break;
     default:
-        fflush(stdin);
         return;
     }
 

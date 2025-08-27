@@ -2,14 +2,12 @@
 
 void Game::start() const {
 
-    set_terminal_mode();
     unsigned int disk_count = 3;
     gameStartingMode_t game_starting_mode = gameStartingModeBasic;
     char ch;
     std::string allowedChars;
     std::string message;
     
-
     
     allowedChars.push_back(ENTER_VALUE);
     message = "To continue the game, press Enter. "
@@ -39,7 +37,9 @@ void Game::start() const {
 
     // Tower Init and start the game
     Towers towers(disk_count, game_starting_mode);
+    set_terminal_mode();
     process(towers);
+    restore_terminal_mode();
 }
 
 void Game::process(Towers& towers) const {
@@ -133,6 +133,7 @@ bool Game::win(const Towers& towers) const {
 
 void Game::help(const Towers& towers) const {
 
+    set_terminal_mode();
     std::string allowedChars;
     std::string message;
 
@@ -156,4 +157,5 @@ void Game::help(const Towers& towers) const {
 
     waitForInput(message, allowedChars);
     towers.displayTowers();
+    restore_terminal_mode();
 }
