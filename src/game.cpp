@@ -133,7 +133,6 @@ bool Game::win(const Canvas& canvas) const {
 
 void Game::help(const Canvas& canvas) const {
 
-    set_terminal_mode();
     std::string allowedChars;
     std::string message;
 
@@ -157,5 +156,4 @@ void Game::help(const Canvas& canvas) const {
 
     waitForInput(message, allowedChars);
     canvas.displayCanvas();
-    restore_terminal_mode();
 }
