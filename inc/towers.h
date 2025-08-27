@@ -1,7 +1,6 @@
 #ifndef TOWER_H
 #define TOWER_H
 
-#include <iostream>
 #include <vector>
 #include <cassert>
 #include <algorithm>

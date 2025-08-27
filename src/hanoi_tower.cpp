@@ -5,4 +5,5 @@ void startHanoiGame() {
 
     Game game;
     game.start();
+    restore_terminal_mode();
 }

@@ -1,38 +1,14 @@
 #include "game.h"
 
-char waitForInput(
-    const std::string& message,
-    const std::string& allowedChars
-) {
-
-    CLEAR_SCREEN();
-    std::cout << message << std::endl;
-
-    char ch;
-    bool flag = true;
-
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            if (allowedChars.find(ch) != std::string::npos) {
-                flag = false;
-            }
-        }
-    }
-
-    CLEAR_SCREEN();
-
-    return ch;
-}
-
 void Game::start() const {
 
+    set_terminal_mode();
     unsigned int disk_count = 3;
     gameStartingMode_t game_starting_mode = gameStartingModeBasic;
     char ch;
     std::string allowedChars;
     std::string message;
+    
 
     
     allowedChars.push_back(ENTER_VALUE);
@@ -167,11 +143,11 @@ void Game::help(const Towers& towers) const {
     "\tMove all disks from the left tower to the right tower.\n\n"
     "CONTROLS\n"
     "\tTo move the cursor between towers:\n"
-    "\t\t'd' or Right Arrow: Move cursor to the right\n"
-    "\t\t'a' or Left Arrow: Move cursor to the left\n"
-    "\t\t'u' or Up Arrow: Pick up a disk\n"
-    "\t\t's' or Down Arrow: Place a disk\n"
-    "\t\t'q' or ESC: Quit the game\n"
+    "\t\t'd' Move cursor to the right\n"
+    "\t\t'a' Move cursor to the left\n"
+    "\t\t'u' Pick up a disk\n"
+    "\t\t's' Place a disk\n"
+    "\t\t ESC: Quit the game\n"
     "\t\t'h': Show this help menu\n\n"
     "\tTo validate a move:\n"
     "\t\tEnter: Validate your position and win if all disks are in the correct order.\n\n"

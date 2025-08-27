@@ -5,14 +5,17 @@
 #define CROSS_PLATFORM_CONIO_H
 
 #include <cstdlib>
+#include <iostream>
 
 void gotoxy(const int x, const int y);
+char waitForInput(const std::string& message, const std::string& allowedChars);
+void set_terminal_mode();
+void restore_terminal_mode();
 
 #if defined(_WIN32) || defined(_WIN64)
     #include <conio.h>
     #define __GET_CH() _getch()
     #define _KBHIT() _kbhit()
-
 #elif defined(__unix__) || defined(__linux__)
     #include <unistd.h>
     #include <termios.h>
