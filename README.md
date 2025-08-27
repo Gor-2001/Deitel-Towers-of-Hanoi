@@ -1,18 +1,37 @@
- # Deitel-Towers-of-Hanoi
+# Deitel Towers of Hanoi
 
-This is a C++ implementation of the classic **Towers of Hanoi** puzzle, inspired by the "*Deitel C++ Book*". The project uses **CMake** for building and supports Windows (tested with Visual Studio).
+A C++ implementation of the classic **Towers of Hanoi** puzzle, inspired by the *Deitel C++ Book*.  
+This project uses **CMake** for building and supports **Windows** and **Linux**.
 
-## Building the Project
+---
 
-1.  **Generate build files**
-    \`\`\`bash
-    cmake -S . -B out
-    \`\`\`
-2.  **Build**
-    \`\`\`bash
-    cmake --build out
-    \`\`\`
-3.  **Run (Debug)**
-    \`\`\`bash
-   out\Debug\DeitelTowersOfHanoi.exe
-    \`\`\`
+## Features
+
+- Multiple game modes based on:
+  - Number of disks.
+  - Starting positions of disks.
+- Interactive gameplay with on-screen instructions.
+- Cross-platform support.
+- Easy to extend or modify for different variations of the game.
+
+---
+
+## Project Structure
+
+```mermaid
+flowchart TD
+    A[cross_platform_conio.h] --> B[tower.h]
+    B --> C[game.h]
+    C --> D[hanoi_tower.h]
+    D --> E[main.cpp]
+
+
+Building the Project
+
+Windows: Generate build files with cmake -S . -B out, build the project with cmake --build out, and run the executable (Debug mode) using out\Debug\DeitelTowersOfHanoi.exe.
+
+Linux: Install the ncurses library with sudo apt-get install libncurses5-dev, generate build files with cmake -S . -B out, build the project with cmake --build out, and run the executable via out/DeitelTowersOfHanoi.
+
+Gameplay Instructions: Follow the on-screen prompts to select number of disks, and starting positions. Use the keys shown during the game to control it.
+
+Notes: Tested on Windows with Visual Studio. Linux support requires ncurses. Designed for educational purposes and to demonstrate C++ concepts from Deitel's book.
