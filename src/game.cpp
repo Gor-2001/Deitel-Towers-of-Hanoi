@@ -36,13 +36,13 @@ void Game::start() const {
 
 
     // Tower Init and start the game
-    Towers towers(disk_count, game_starting_mode);
+    Canvas canvas(disk_count, game_starting_mode);
     set_terminal_mode();
-    process(towers);
+    process(canvas);
     restore_terminal_mode();
 }
 
-void Game::process(Towers& towers) const {
+void Game::process(Canvas& canvas) const {
     volatile int ch; // Use volatile to prevent compiler optimizations
     
     while (true) {
@@ -53,39 +53,39 @@ void Game::process(Towers& towers) const {
 
             // Validate
             case ENTER_VALUE:
-                if (win(towers))
+                if (win(canvas))
                     return;
                 break;
 
             // Escape
             case 27:
-                if(exit(towers))
+                if(exit(canvas))
                     return;
                 break;
 
             // Move Left (a)
             case 'a':
-                towers.cursorMoveLeft();
+                canvas.cursorMoveLeft();
                 break;
 
             // Move Right (d)
             case 'd':
-                towers.cursorMoveRight();
+                canvas.cursorMoveRight();
                 break;
 
             // Open help window (h)
             case 'h':
-                help(towers);
+                help(canvas);
                 break;
 
             // Move Down (s)
             case 's':
-                towers.diskMoveDown();
+                canvas.diskMoveDown();
                 break;
 
             // Move Up (w)
             case 'w':
-                towers.diskMoveUp();
+                canvas.diskMoveUp();
                 break;
 
             default:
@@ -97,7 +97,7 @@ void Game::process(Towers& towers) const {
 }
 
 
-bool Game::exit(Towers& towers) const {
+bool Game::exit(const Canvas& canvas) const {
 
     char ch;
     std::string allowedChars;
@@ -109,7 +109,7 @@ bool Game::exit(Towers& towers) const {
     ch = waitForInput(message, allowedChars);
     if(ch == 'n') {
         CLEAR_SCREEN();
-        towers.displayTowers();
+        canvas.displayCanvas();
         return false;
     }
     else {
@@ -119,9 +119,9 @@ bool Game::exit(Towers& towers) const {
     }
 }
 
-bool Game::win(const Towers& towers) const {
+bool Game::win(const Canvas& canvas) const {
 
-    if(towers.isWinningPosition()) {
+    if(canvas.isWinningPosition()) {
         CLEAR_SCREEN();
         std::cout << "You Win.\n";
         return true;
@@ -131,7 +131,7 @@ bool Game::win(const Towers& towers) const {
 }
 
 
-void Game::help(const Towers& towers) const {
+void Game::help(const Canvas& canvas) const {
 
     set_terminal_mode();
     std::string allowedChars;
@@ -156,6 +156,6 @@ void Game::help(const Towers& towers) const {
     "\tPress 'h' to return to the game.\n\n";
 
     waitForInput(message, allowedChars);
-    towers.displayTowers();
+    canvas.displayCanvas();
     restore_terminal_mode();
 }

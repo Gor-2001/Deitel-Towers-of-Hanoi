@@ -1,24 +1,24 @@
-#include "towers.h"
+#include "canvas.h"
 
 /*****************************************************************************/
 
-Towers::Towers(
+Canvas::Canvas(
     const unsigned int disks_count, 
-    const gameStartingMode_t gameStartingMode) {
+    const gameStartingMode_t game_starting_mode) {
 
     setDisksCount(disks_count);
     setCursorPosition(cursorPositionLeft);
     setDiskPosition(diskPositionDown);
     setUpperDiskSize(0);
-    setGameStartingMode(gameStartingMode);
-    towerInit();
-    towersIsValid();
-    displayTowers();
+    setGameStartingMode(game_starting_mode);
+    towersInit();
+    towersAreValid();
+    displayCanvas();
 }
 
 /*****************************************************************************/
 
-void Towers::displayTowers() const {
+void Canvas::displayCanvas() const {
     
     printFullLines();
     printEmptyLines(UPPER_DISK_Y - 1);
@@ -26,9 +26,9 @@ void Towers::displayTowers() const {
     printEmptyLines(CEIL_HIGH - UPPER_DISK_Y - 1);
 
     for (int index = disksCount - 1; index >= 0; --index)
-        printDisksByIndex(index);
+        printDiskByIndex(index);
 
-    printTowersBases();
+    printTowersBase();
     printCursor();
     printEmptyLines();
     printFullLines();
@@ -36,7 +36,7 @@ void Towers::displayTowers() const {
 
 /*****************************************************************************/
 
-void Towers::cursorMoveRight() {
+void Canvas::cursorMoveRight() {
 
     switch (cursorPosition) {
     case cursorPositionLeft:
@@ -56,7 +56,7 @@ void Towers::cursorMoveRight() {
     printCursor();
 }
 
-void Towers::cursorMoveLeft() {
+void Canvas::cursorMoveLeft() {
 
     switch (cursorPosition) {
     case cursorPositionRight:
@@ -76,7 +76,7 @@ void Towers::cursorMoveLeft() {
     printCursor();
 }
 
-void Towers::diskMoveUp() {
+void Canvas::diskMoveUp() {
 
     if (tower[cursorPosition].empty())
         return;
@@ -93,10 +93,10 @@ void Towers::diskMoveUp() {
     printUpperDisk();
 
     gotoxy(0, CEIL_HIGH + disksCount - (tower[cursorPosition].size() + 1));
-    printDisksByIndex(tower[cursorPosition].size());
+    printDiskByIndex(tower[cursorPosition].size());
 }
 
-void Towers::diskMoveDown() {
+void Canvas::diskMoveDown() {
 
     if (!upperDiskSize)
         return;
@@ -116,12 +116,12 @@ void Towers::diskMoveDown() {
     printUpperDisk();
 
     gotoxy(0, CEIL_HIGH + disksCount - tower[cursorPosition].size());
-    printDisksByIndex(tower[cursorPosition].size() - 1);
+    printDiskByIndex(tower[cursorPosition].size() - 1);
 }
 
 /*****************************************************************************/
 
-bool Towers::isWinningPosition() const {
+bool Canvas::isWinningPosition() const {
 
     if (upperDiskSize)
         return false;
@@ -129,14 +129,14 @@ bool Towers::isWinningPosition() const {
     if (tower[0].size() || tower[1].size() || tower[2].size() != disksCount)
         return false;
 
-    towersIsValid();
+    towersAreValid();
 
     return true;
 }
 
 /*****************************************************************************/
 
-void Towers::printString(const std::string string, const unsigned int count, const bool endl = false) const {
+void Canvas::printString(const std::string string, const unsigned int count, const bool endl = false) const {
 
     for (unsigned int i = 0; i < count; ++i)
         std::cout << string;
@@ -145,7 +145,7 @@ void Towers::printString(const std::string string, const unsigned int count, con
         std::cout << std::endl;
 }
 
-void Towers::printEmptyLines(const unsigned int count) const {
+void Canvas::printEmptyLines(const unsigned int count) const {
 
     const unsigned int width = 6 * disksCount + 13;
     for (size_t i = 0; i < count; i++)
@@ -156,7 +156,7 @@ void Towers::printEmptyLines(const unsigned int count) const {
     } 
 }
 
-void Towers::printFullLines(const unsigned int count) const {
+void Canvas::printFullLines(const unsigned int count) const {
 
     const unsigned int width = 6 * disksCount + 13;
 
@@ -164,7 +164,7 @@ void Towers::printFullLines(const unsigned int count) const {
         printString("#", width, true);
 }
 
-void Towers::printUpperDisk() const {
+void Canvas::printUpperDisk() const {
 
     if (!upperDiskSize) {
         printEmptyLines();
@@ -186,7 +186,7 @@ void Towers::printUpperDisk() const {
 }
 
 
-void Towers::printDisksByIndex(const unsigned int index) const {
+void Canvas::printDiskByIndex(const unsigned int index) const {
 
     const unsigned int leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
     const unsigned int middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
@@ -227,7 +227,7 @@ void Towers::printDisksByIndex(const unsigned int index) const {
     printString("  #", 1, true);
 }
 
-void Towers::printTowersBases() const {
+void Canvas::printTowersBase() const {
 
     // The wall 
     printString("#  ", 1);
@@ -248,7 +248,7 @@ void Towers::printTowersBases() const {
     printString("#", 1, true);
 }
 
-void Towers::printCursor() const {
+void Canvas::printCursor() const {
 
     printString("#  ", 1);
     printString(" ", cursorPosition * (disksCount * 2 + 3) + disksCount - 1);
@@ -260,73 +260,73 @@ void Towers::printCursor() const {
 
 /*****************************************************************************/
 
-void Towers::setDisksCount(const unsigned int disks_count) {
+void Canvas::setDisksCount(const unsigned int disks_count) {
     disksCount = disks_count;
 }
 
-void Towers::setCursorPosition(const cursorPosition_t cursor_position) {
+void Canvas::setCursorPosition(const cursorPosition_t cursor_position) {
     cursorPosition = cursor_position;
 }
 
-void Towers::setDiskPosition(const diskPosition_t disk_position) {
+void Canvas::setDiskPosition(const diskPosition_t disk_position) {
     diskPosition = disk_position;
 }
 
-void Towers::setUpperDiskSize(const unsigned int upper_disk_size) {
+void Canvas::setUpperDiskSize(const unsigned int upper_disk_size) {
     upperDiskSize = upper_disk_size;
 }
 
-void Towers::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
+void Canvas::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
     gameStartingMode = game_starting_mode;
 }
 
 /*****************************************************************************/
 
-unsigned int Towers::getDisksCount() const{
+unsigned int Canvas::getDisksCount() const{
     return disksCount;
 }
 
-unsigned int Towers::getCursorY() const{ 
+unsigned int Canvas::getCursorY() const{
     return CEIL_HIGH + getDisksCount() + 1;
 }
 
-unsigned int Towers::getUpperDiskY() {
+unsigned int Canvas::getUpperDiskY() {
     return UPPER_DISK_Y;
 }
 
 /*****************************************************************************/
 
-void Towers::towersClear() {
+void Canvas::towersClear() {
     tower[0].clear();
     tower[1].clear();
     tower[2].clear();
 }
 
 
-void Towers::towerInit() {
+void Canvas::towersInit() {
 
     towersClear();
 
     switch (gameStartingMode)
     {
     case gameStartingModeBasic:
-        towerInitBasic();
+        towersInitBasic();
         break;
     case gameStartingModeRandom:
-        towerInitRandom();
+        towersInitRandom();
         break;
     default:
         assert((true) && "Game starting mode is invalid");
     }
 }
 
-void Towers::towerInitBasic() {
+void Canvas::towersInitBasic() {
 
     for (size_t i = 0; i < disksCount; i++)
         tower[0].push_back(disksCount - i);
 }
 
-void Towers::towerInitRandom() {
+void Canvas::towersInitRandom() {
     
     for (size_t i = 0; i < disksCount; i++)
         tower[rand() % 3].push_back(disksCount - i);
@@ -334,7 +334,7 @@ void Towers::towerInitRandom() {
 
 /*****************************************************************************/
 
-bool Towers::vectorIsMonotone(std::vector<unsigned int> vec) const {
+bool Canvas::towerIsMonotone(std::vector<unsigned int> vec) const {
 
     for (unsigned int i = 1; i < vec.size(); ++i) {
         if (vec[i - 1] <= vec[i])
@@ -344,7 +344,7 @@ bool Towers::vectorIsMonotone(std::vector<unsigned int> vec) const {
     return true;
 }
 
-void Towers::towersIsValid() const {
+void Canvas::towersAreValid() const {
 
     assert(
         (cursorPosition >= cursorPositionMin && cursorPosition <= cursorPositionMax) &&
@@ -357,15 +357,15 @@ void Towers::towersIsValid() const {
     std::vector<unsigned int> temp;
 
     assert(
-        vectorIsMonotone((std::vector<unsigned int>)tower[0]) &&
+        towerIsMonotone((std::vector<unsigned int>)tower[0]) &&
         "Left tower disks are not monotone\n");
 
     assert(
-        vectorIsMonotone((std::vector<unsigned int>)tower[1]) &&
+        towerIsMonotone((std::vector<unsigned int>)tower[1]) &&
         "Middle tower disks are not monotone\n");
 
     assert(
-        vectorIsMonotone((std::vector<unsigned int>)tower[2]) &&
+        towerIsMonotone((std::vector<unsigned int>)tower[2]) &&
         "Right tower disks are not monotone\n");
 
     temp.insert(temp.end(), tower[0].begin(), tower[0].end());

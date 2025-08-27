@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "towers.h"
+#include "canvas.h"
 
 class Game
 {
@@ -11,10 +11,10 @@ public:
 
 private:
 
-    void process(Towers& towers) const;
-    bool exit(Towers& towers) const;
-    void help(const Towers& towers) const;
-    bool win(const Towers& towers) const;
+    void process(Canvas& canvas) const;
+    bool exit(const Canvas& canvas) const;
+    void help(const Canvas& canvas) const;
+    bool win(const Canvas& canvas) const;
 
 };
 

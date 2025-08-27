@@ -37,18 +37,18 @@ enum gameStartingMode_t
     gameStartingModeMax = gameStartingModeBasic,
 };
 
-class Towers
+class Canvas
 {
 public:
 
     // Constructor
-    Towers(
+    Canvas(
         const unsigned int disks_count = 10,
-        const gameStartingMode_t gameStartingMode = gameStartingModeBasic
+        const gameStartingMode_t game_starting_mode = gameStartingModeBasic
     );
 
     // Input and output functions
-    void displayTowers() const;
+    void displayCanvas() const;
 
     // Movement functions
     void cursorMoveRight();
@@ -77,9 +77,9 @@ private:
     void printFullLines(const unsigned int count = 1) const;
 
     void printUpperDisk() const;
-    void printDisksByIndex(const unsigned int index) const;
+    void printDiskByIndex(const unsigned int index) const;
 
-    void printTowersBases() const;
+    void printTowersBase() const;
     void printCursor() const;
 
     // Set functions
@@ -96,13 +96,13 @@ private:
 
     // Towers filling and cleaning functions
     void towersClear();
-    void towerInit();
-    void towerInitBasic();
-    void towerInitRandom();
+    void towersInit();
+    void towersInitBasic();
+    void towersInitRandom();
 
     // Validation functions
-    bool vectorIsMonotone(std::vector<unsigned int> vec) const;
-    void towersIsValid() const;
+    bool towerIsMonotone(std::vector<unsigned int> vec) const;
+    void towersAreValid() const;
 
 };
 
