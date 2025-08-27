@@ -140,7 +140,7 @@ void Game::help(const Towers& towers) const {
     message = "NAME\n"
     "\tTowers of Hanoi - a command-line puzzle game\n\n"
     "SYNOPSIS\n"
-    "\tMove all disks from the left tower to the right tower.\n\n"
+    "\tMove all disks to the right tower.\n\n"
     "CONTROLS\n"
     "\tTo move the cursor between towers:\n"
     "\t\t'd' Move cursor to the right\n"
