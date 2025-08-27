@@ -28,6 +28,7 @@ enum diskPosition_t
     diskPositionUp      = diskPositionDown + 1,
     diskPositionMax     = diskPositionUp,
 };
+
 enum gameStartingMode_t
 {
     gameStartingModeMin = 0,
@@ -35,7 +36,6 @@ enum gameStartingMode_t
     gameStartingModeRandom = gameStartingModeBasic + 1,
     gameStartingModeMax = gameStartingModeBasic,
 };
-
 
 class Towers
 {
