@@ -5,7 +5,7 @@ void Game::start() const {
     unsigned int disk_count = 3;
     gameStartingMode_t game_starting_mode = gameStartingModeBasic;
 
-    system("cls");
+    CLEAR_SCREEN();
 
     //Starting instructions
     std::cout <<
@@ -16,9 +16,9 @@ void Game::start() const {
     char ch;
     do {
         ch = _getch();
-    } while (ch != 13);
+    } while (ch != 13 && ch != 10);
 
-    system("cls");
+    CLEAR_SCREEN();
 
 
     // Enter game starting mode
@@ -29,9 +29,9 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while (ch != 'b' && ch != 'r' && ch != 13);
+    } while (ch != 'b' && ch != 'r' && ch != 13 && ch != 10);
 
-    system("cls");
+    CLEAR_SCREEN();
 
     if (ch == 'r')
         game_starting_mode = gameStartingModeRandom;
@@ -44,9 +44,9 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while ((ch > '9' || ch < '1') && ch != 13);
+    } while ((ch > '9' || ch < '1') && ch != 13 && ch != 10);
 
-    system("cls");
+    CLEAR_SCREEN();
 
     if(ch >= '1' && ch <= '9')
         disk_count = ch - '0';
@@ -57,48 +57,83 @@ void Game::start() const {
 }
 
 void Game::process(Towers& towers) const {
-
-    char ch;
-
+    volatile int ch; // Use volatile to prevent compiler optimizations
+    
     while (true) {
         if (_kbhit()) {
             ch = _getch();
 
-            switch (ch) {
+            // The following conditional block handles
+            // the platform-specific behavior of arrow keys.
+            // Since we are using WASD, this block is no longer needed
+            // unless we want to support both arrow keys and WASD.
+            #if defined(_WIN32) || defined(_WIN64)
+                if (ch == 0 || ch == 224) { // Windows extended key
+                    ch = _getch(); // Get the second part of the key code
+                }
+            #elif defined(__linux__)
+                if (ch == 27) { // Linux escape sequence
+                    // Read the next two characters
+                    _getch(); // Read '['
+                    ch = _getch(); // Read the final key code
+                    
+                    // Map the Linux key codes ('A', 'B', etc.)
+                    // to the Windows codes (72, 80, etc.)
+                    switch (ch) {
+                        case 'A': ch = 72; break; // Up
+                        case 'B': ch = 80; break; // Down
+                        case 'C': ch = 77; break; // Right
+                        case 'D': ch = 75; break; // Left
+                        default: ch = 0; // Set to 0 if an unknown key is pressed
+                    }
+                }
+            #endif
 
+            // Now, the switch statement will handle both
+            // platform's key codes correctly.
+            switch (ch) {
                 // Validate
             case 13:
+            case 10: // Also check for Line Feed on Linux
                 if (win(towers))
                     return;
                 break;
 
                 // Escape
             case 27:
-                exit();
-                return;
+                // Check if the escape key was pressed and not an arrow key
+                #if defined(_WIN32) || defined(_WIN64)
+                    exit();
+                    return;
+                #endif
+                break;
 
-                // Move Up
-            case 72:
+                // Move Up (W)
+            case 'w':
+            case 'W':
                 towers.diskMoveUp();
                 break;
 
-                // Move Left
-            case 75:
+                // Move Left (A)
+            case 'a':
+            case 'A':
                 towers.cursorMoveLeft();
                 break;
 
-                // Move Right
-            case 77:
+                // Move Right (D)
+            case 'd':
+            case 'D':
                 towers.cursorMoveRight();
                 break;
 
-                // Move Down
-            case 80:
+                // Move Down (S)
+            case 's':
+            case 'S':
                 towers.diskMoveDown();
                 break;
 
-                // Open help window
-            case 104:
+                // Open help window (H)
+            case 104: // You could also use 'h' and 'H' here
                 help(towers);
                 break;
 
@@ -106,20 +141,21 @@ void Game::process(Towers& towers) const {
                 break;
             }
         }
-        Sleep(10);
+        SLEEP(10);
     }
 }
 
+
 void Game::exit() const {
 
-    system("cls");
+    CLEAR_SCREEN();
     std::cout << "ESC pressed. Exiting.\n";
 }
 
 bool Game::win(const Towers& towers) const {
 
     if(towers.isWinningPosition()) {
-        system("cls");
+        CLEAR_SCREEN();
         std::cout << "You Win.\n";
         return true;
     }
@@ -131,7 +167,7 @@ bool Game::win(const Towers& towers) const {
 void Game::help(const Towers& towers) const {
 
     // Clear the screen and display help
-    system("cls");
+    CLEAR_SCREEN();
 
     std::cout << "NAME\n";
     std::cout << "\tTowers of Hanoi - a command-line puzzle game\n\n";
@@ -161,6 +197,6 @@ void Game::help(const Towers& towers) const {
     } while (ch != 'h');
 
     // Clear the help screen and redraw the game state
-    system("cls");
+    CLEAR_SCREEN();
     towers.displayTowers();
 }

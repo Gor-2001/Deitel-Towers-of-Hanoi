@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "towers.h"
-#include <conio.h>
 
 class Game
 {

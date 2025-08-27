@@ -5,15 +5,13 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
-#include <windows.h>
+#include "cross_platform_conio.h"
 
 #define MAX_DISKS_COUNT 9
 #define MIN_DISKS_COUNT 1
 
 #define CEIL_HIGH 9
 #define UPPER_DISK_Y 4
-
-void gotoxy(int x, int y);
 
 enum cursorPosition_t 
 { 
@@ -45,7 +43,7 @@ class Towers
 public:
 
     // Constructor
-    Towers::Towers(
+    Towers(
         const unsigned int disks_count = 10,
         const gameStartingMode_t gameStartingMode = gameStartingModeBasic
     );
