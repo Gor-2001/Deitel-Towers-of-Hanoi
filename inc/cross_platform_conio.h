@@ -33,7 +33,7 @@ void restore_terminal_mode();
     #define CLEAR_SCREEN() system("clear")
     #define ENTER_VALUE 10
 #else
-    #error "Unsupported platform. Cannot define __GET_CH() and _KBHIT()."
+    #error "Unsupported platform."
 #endif
 
 
