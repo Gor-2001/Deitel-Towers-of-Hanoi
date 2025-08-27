@@ -4,42 +4,34 @@
 #ifndef CROSS_PLATFORM_CONIO_H
 #define CROSS_PLATFORM_CONIO_H
 
-// Define a macro for Windows platform
+#include <cstdlib>
+
 #if defined(_WIN32) || defined(_WIN64)
-    #include <conio.h>
-    #include <stdlib.h>
     #include <windows.h>
-
-    // Macro for clearing the screen on Windows
-    #define CLEAR_SCREEN() system("cls")
-
-    // The _getch() and _kbhit() functions are already available.
-    // Macro for cross-platform sleep
-    #define SLEEP(ms) Sleep(ms)
-
-    // gotoxy function prototype for Windows
-    void gotoxy(const int x, const int y);
-
-// Define a macro for Linux platform
-#elif defined(__linux__)
-    #include <stdio.h>
-    #include <termios.h>
+    #define SLEEP(n) Sleep(n)
+#elif defined(__unix__)
     #include <unistd.h>
-    #include <stdlib.h>
-    #include <sys/select.h>
-    #include <time.h>
-
-    // Macro for clearing the screen on Linux
-    #define CLEAR_SCREEN() system("clear")
-
-    // Function prototypes for Linux
-    char _getch();
-    int _kbhit();
-    void SLEEP(int ms);
-    void gotoxy(const int x, const int y);
-
+    #define SLEEP(n) usleep((n) * 1000)
 #else
-    #error "Unsupported platform"
+    #error "Unsupported platform. Cannot define SLEEP(n)."
 #endif
+
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define CLEAR_SCREEN() system("cls")
+#elif defined(__unix__)
+    #define CLEAR_SCREEN() system("clear"); 
+#else
+    #error "Unsupported platform. Cannot define CLEAR_SCREEN()."
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define ENTER_VALUE 13
+#elif defined(__unix__)
+    #define ENTER_VALUE 13
+#else
+    #error "Unsupported platform. Cannot define values for keys."
+#endif  
+
 
 #endif // CROSS_PLATFORM_CONIO_H

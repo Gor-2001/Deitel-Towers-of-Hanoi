@@ -16,7 +16,7 @@ void Game::start() const {
     char ch;
     do {
         ch = _getch();
-    } while (ch != 13 && ch != 10);
+    } while (ch != ENTER_VALUE);
 
     CLEAR_SCREEN();
 
@@ -29,7 +29,7 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while (ch != 'b' && ch != 'r' && ch != 13 && ch != 10);
+    } while (ch != 'b' && ch != 'r' && ch != ENTER_VALUE);
 
     CLEAR_SCREEN();
 
@@ -44,7 +44,7 @@ void Game::start() const {
 
     do {
         ch = _getch();
-    } while ((ch > '9' || ch < '1') && ch != 13 && ch != 10);
+    } while ((ch > '9' || ch < '1') && ch != ENTER_VALUE);
 
     CLEAR_SCREEN();
 
@@ -63,78 +63,42 @@ void Game::process(Towers& towers) const {
         if (_kbhit()) {
             ch = _getch();
 
-            // The following conditional block handles
-            // the platform-specific behavior of arrow keys.
-            // Since we are using WASD, this block is no longer needed
-            // unless we want to support both arrow keys and WASD.
-            #if defined(_WIN32) || defined(_WIN64)
-                if (ch == 0 || ch == 224) { // Windows extended key
-                    ch = _getch(); // Get the second part of the key code
-                }
-            #elif defined(__linux__)
-                if (ch == 27) { // Linux escape sequence
-                    // Read the next two characters
-                    _getch(); // Read '['
-                    ch = _getch(); // Read the final key code
-                    
-                    // Map the Linux key codes ('A', 'B', etc.)
-                    // to the Windows codes (72, 80, etc.)
-                    switch (ch) {
-                        case 'A': ch = 72; break; // Up
-                        case 'B': ch = 80; break; // Down
-                        case 'C': ch = 77; break; // Right
-                        case 'D': ch = 75; break; // Left
-                        default: ch = 0; // Set to 0 if an unknown key is pressed
-                    }
-                }
-            #endif
-
-            // Now, the switch statement will handle both
-            // platform's key codes correctly.
             switch (ch) {
-                // Validate
-            case 13:
-            case 10: // Also check for Line Feed on Linux
+                
+            // Validate
+            case ENTER_VALUE:
                 if (win(towers))
                     return;
                 break;
 
-                // Escape
+            // Escape
             case 27:
-                // Check if the escape key was pressed and not an arrow key
-                #if defined(_WIN32) || defined(_WIN64)
-                    exit();
-                    return;
-                #endif
-                break;
+                exit();
+                return;
 
-                // Move Up (W)
-            case 'w':
-            case 'W':
-                towers.diskMoveUp();
-                break;
-
-                // Move Left (A)
+            // Move Left (a)
             case 'a':
-            case 'A':
                 towers.cursorMoveLeft();
                 break;
 
-                // Move Right (D)
+            // Move Right (d)
             case 'd':
-            case 'D':
                 towers.cursorMoveRight();
                 break;
 
-                // Move Down (S)
+            // Open help window (h)
+            case 'h':
+                help(towers);
+                break;
+
+            // Move Down (s)
             case 's':
-            case 'S':
                 towers.diskMoveDown();
                 break;
 
-                // Open help window (H)
-            case 104: // You could also use 'h' and 'H' here
-                help(towers);
+            // Move Up (w)
+            case 'w':
+                towers.diskMoveUp();
                 break;
 
             default:
