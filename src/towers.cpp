@@ -27,15 +27,19 @@ Towers::Towers(
 /*****************************************************************************/
 
 void Towers::displayTowers() const {
+    
+    printFullLines();
+    printEmptyLines(UPPER_DISK_Y - 1);
+    printUpperDisk();
+    printEmptyLines(CEIL_HIGH - UPPER_DISK_Y - 1);
 
-    // CEIL_HIGH lines
-    printCeil();
+    for (int index = disksCount - 1; index >= 0; --index)
+        printDisksByIndex(index);
 
-    // disksCount lines
-    printLevels();
-
-    // FLOOR_HIGH lines
-    printFloor();
+    printTowersBases();
+    printCursor();
+    printEmptyLines();
+    printFullLines();
 }
 
 /*****************************************************************************/
@@ -97,7 +101,7 @@ void Towers::diskMoveUp() {
     printUpperDisk();
 
     gotoxy(0, CEIL_HIGH + disksCount - (tower[cursorPosition].size() + 1));
-    printLevelByIndex(tower[cursorPosition].size());
+    printDisksByIndex(tower[cursorPosition].size());
 }
 
 void Towers::diskMoveDown() {
@@ -120,7 +124,7 @@ void Towers::diskMoveDown() {
     printUpperDisk();
 
     gotoxy(0, CEIL_HIGH + disksCount - tower[cursorPosition].size());
-    printLevelByIndex(tower[cursorPosition].size() - 1);
+    printDisksByIndex(tower[cursorPosition].size() - 1);
 }
 
 /*****************************************************************************/
@@ -149,7 +153,7 @@ void Towers::printString(const std::string string, const unsigned int count, con
         std::cout << std::endl;
 }
 
-void Towers::printEmptyLines(const unsigned int count = 1) const {
+void Towers::printEmptyLines(const unsigned int count) const {
 
     const unsigned int width = 6 * disksCount + 13;
     for (size_t i = 0; i < count; i++)
@@ -160,20 +164,12 @@ void Towers::printEmptyLines(const unsigned int count = 1) const {
     } 
 }
 
-void Towers::printFullLines(const unsigned int count = 1) const {
+void Towers::printFullLines(const unsigned int count) const {
 
     const unsigned int width = 6 * disksCount + 13;
 
     for (size_t i = 0; i < count; i++)
         printString("#", width, true);
-}
-
-void Towers::printCeil() const {
-
-    printFullLines();
-    printEmptyLines(UPPER_DISK_Y - 1);
-    printUpperDisk();
-    printEmptyLines(CEIL_HIGH - UPPER_DISK_Y - 1);
 }
 
 void Towers::printUpperDisk() const {
@@ -183,42 +179,35 @@ void Towers::printUpperDisk() const {
         return;
     }
 
-    switch (cursorPosition) {
-    case cursorPositionLeft:
-        printLevelByValues(upperDiskSize, 0, 0, ' ');
-        break;
-    case cursorPositionMiddle:
-        printLevelByValues(0, upperDiskSize, 0, ' ');
-        break;
-    case cursorPositionRight:
-        printLevelByValues(0, 0, upperDiskSize, ' ');
-        break;
-    default:
-        assert((true) && "Cursor position is invalid");
-    }
+    // The wall 
+    printString("#  ", 1);
+
+    // Disk
+    printString(" ", (2 * disksCount + 3) * cursorPosition + disksCount - upperDiskSize);
+    printString("*", upperDiskSize);
+    printString(" ", 1);
+    printString("*", upperDiskSize);
+    printString(" ", (2 * disksCount + 3) * (2 - cursorPosition) + disksCount - upperDiskSize);
+
+    // The wall 
+    printString("  #", 1, true);
 }
 
-void Towers::printLevels() const {
 
-    for (int index = disksCount - 1; index >= 0; --index)
-        printLevelByIndex(index);
-}
+void Towers::printDisksByIndex(const unsigned int index) const {
 
-void Towers::printLevelByValues(
-    const unsigned int leftDiskWidth, 
-    const unsigned int middleDiskWidth, 
-    const unsigned int rightDiskWidth, 
-    const char diskDelimiter,
-    const char diskCharacter) const {
-
+    const unsigned int leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
+    const unsigned int middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
+    const unsigned int rightDiskWidth  = tower[2].size() > index ? tower[2][index] : 0;
+    
     // The wall 
     printString("#  ", 1);
 
     // The left disk
     printString(" ", disksCount - leftDiskWidth);
-    printString(std::string(1, diskCharacter), leftDiskWidth);
-    printString(std::string(1, diskDelimiter), 1);
-    printString(std::string(1, diskCharacter), leftDiskWidth);
+    printString("*", leftDiskWidth);
+    printString("#", 1);
+    printString("*", leftDiskWidth);
     printString(" ", disksCount - leftDiskWidth);
 
     // Space 
@@ -226,9 +215,9 @@ void Towers::printLevelByValues(
 
     // The Middle disk
     printString(" ", disksCount - middleDiskWidth);
-    printString(std::string(1, diskCharacter), middleDiskWidth);
-    printString(std::string(1, diskDelimiter), 1);
-    printString(std::string(1, diskCharacter), middleDiskWidth);
+    printString("*", middleDiskWidth);
+    printString("#", 1);
+    printString("*", middleDiskWidth);
     printString(" ", disksCount - middleDiskWidth);
 
     // Space 
@@ -236,9 +225,9 @@ void Towers::printLevelByValues(
 
     // The Right disk
     printString(" ", disksCount - rightDiskWidth);
-    printString(std::string(1, diskCharacter), rightDiskWidth);
-    printString(std::string(1, diskDelimiter), 1);
-    printString(std::string(1, diskCharacter), rightDiskWidth);
+    printString("*", rightDiskWidth);
+    printString("#", 1);
+    printString("*", rightDiskWidth);
     printString(" ", disksCount - rightDiskWidth);
 
 
@@ -246,20 +235,25 @@ void Towers::printLevelByValues(
     printString("  #", 1, true);
 }
 
-void Towers::printLevelByIndex(
-    const unsigned int index,
-    const char diskDelimiter,
-    const char diskCharacter) const {
-
-    const unsigned int leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
-    const unsigned int middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
-    const unsigned int rightDiskWidth  = tower[2].size() > index ? tower[2][index] : 0;
-    
-    printLevelByValues(leftDiskWidth, middleDiskWidth, rightDiskWidth, diskDelimiter, diskCharacter);
-}
-
 void Towers::printTowersBases() const {
-    printLevelByValues(disksCount, disksCount, disksCount, '#', '#');
+
+    // The wall 
+    printString("#  ", 1);
+
+    // Left Part
+    printString("#", 2 * disksCount + 1);
+    printString(" ", 2);
+
+    // Middle
+    printString("#", 2 * disksCount + 1);
+    printString(" ", 2);
+
+    // Right
+    printString("#", 2 * disksCount + 1);
+    printString(" ", 2);
+
+    // The wall 
+    printString("#", 1, true);
 }
 
 void Towers::printCursor() const {
@@ -272,13 +266,6 @@ void Towers::printCursor() const {
 
 }
 
-void Towers::printFloor() const {
-
-    printTowersBases();
-    printCursor();
-    printEmptyLines();
-    printFullLines();
-}
 /*****************************************************************************/
 
 void Towers::setDisksCount(const unsigned int disks_count) {
@@ -367,18 +354,34 @@ bool Towers::vectorIsMonotone(std::vector<unsigned int> vec) const {
 
 void Towers::towersIsValid() const {
 
-    assert((cursorPosition >= cursorPositionMin && cursorPosition <= cursorPositionMax) && "Cursor Position is invalid");
-    assert((disksCount > 0 && disksCount <= MAX_DISKS_COUNT) && "Disk count is invalid");
+    assert(
+        (cursorPosition >= cursorPositionMin && cursorPosition <= cursorPositionMax) &&
+        "Cursor Position is invalid");
+
+    assert(
+        (disksCount >= MIN_DISKS_COUNT && disksCount <= MAX_DISKS_COUNT) && 
+        "Disk count is invalid");
 
     std::vector<unsigned int> temp;
 
-    assert(vectorIsMonotone((std::vector<unsigned int>)tower[0]) && "Left tower disks are not monotone\n");
-    assert(vectorIsMonotone((std::vector<unsigned int>)tower[1]) && "Middle tower disks are not monotone\n");
-    assert(vectorIsMonotone((std::vector<unsigned int>)tower[2]) && "Right tower disks are not monotone\n");
+    assert(
+        vectorIsMonotone((std::vector<unsigned int>)tower[0]) &&
+        "Left tower disks are not monotone\n");
+
+    assert(
+        vectorIsMonotone((std::vector<unsigned int>)tower[1]) &&
+        "Middle tower disks are not monotone\n");
+
+    assert(
+        vectorIsMonotone((std::vector<unsigned int>)tower[2]) &&
+        "Right tower disks are not monotone\n");
 
     temp.insert(temp.end(), tower[0].begin(), tower[0].end());
     temp.insert(temp.end(), tower[1].begin(), tower[1].end());
     temp.insert(temp.end(), tower[2].begin(), tower[2].end());
+    
+    if(upperDiskSize)
+        temp.push_back(upperDiskSize);
 
     assert(temp.size() == disksCount && "Incorrect disk count\n");
 

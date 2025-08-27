@@ -8,10 +8,9 @@
 #include <windows.h>
 
 #define MAX_DISKS_COUNT 9
+#define MIN_DISKS_COUNT 1
 
 #define CEIL_HIGH 9
-#define FLOOR_HIGH 4
-
 #define UPPER_DISK_Y 4
 
 void gotoxy(int x, int y);
@@ -77,28 +76,14 @@ private:
 
     // Input and output functions
     void printString(std::string string, const unsigned int count, bool endl) const;
-    void printEmptyLines(const unsigned int count) const;
-    void printFullLines(const unsigned int count) const;
+    void printEmptyLines(const unsigned int count = 1) const;
+    void printFullLines(const unsigned int count = 1) const;
 
-    void printCeil() const;
     void printUpperDisk() const;
-
-    void printLevels() const;
-    void printLevelByValues(
-        const unsigned int leftDiskWidth,
-        const unsigned int middleDiskWidth,
-        const unsigned int rightDiskWidth,
-        const char diskDelimiter = '#',
-        const char diskCharacter = '*') const;
-
-    void printLevelByIndex(
-        const unsigned int index,
-        const char diskDelimiter = '#',
-        const char diskCharacter = '*') const;
+    void printDisksByIndex(const unsigned int index) const;
 
     void printTowersBases() const;
     void printCursor() const;
-    void printFloor() const;
 
     // Set functions
     void setDisksCount(const unsigned int disks_count);
