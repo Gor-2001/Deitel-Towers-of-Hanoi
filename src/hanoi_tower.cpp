@@ -1,4 +1,3 @@
-#include "game.h"
 #include "hanoi_tower.h"
 
 void startHanoiGame() {
