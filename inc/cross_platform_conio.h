@@ -10,12 +10,24 @@ void gotoxy(const int x, const int y);
 
 #if defined(_WIN32) || defined(_WIN64)
     #include <conio.h>
-#elif defined(__unix__)
-    
+    #define __GET_CH() _getch()
+    #define _KBHIT() _kbhit()
+
+#elif defined(__unix__) || defined(__linux__)
+    #include <unistd.h>
+    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <stdio.h>
+
+    int kbhit(void);
+    #define __GET_CH() getchar()
+    #define _KBHIT() kbhit()
+
 #else
-    #error "Unsupported platform. Cannot define SLEEP(n)."
+    #error "Unsupported platform. Cannot define __GET_CH() and _KBHIT()."
 #endif
 
+// SLEEP(n)
 #if defined(_WIN32) || defined(_WIN64)
     #include <windows.h>
     #define SLEEP(n) Sleep(n)
@@ -27,6 +39,7 @@ void gotoxy(const int x, const int y);
 #endif
 
 
+// CLEAR_SCREEN()
 #if defined(_WIN32) || defined(_WIN64)
     #define CLEAR_SCREEN() system("cls")
 #elif defined(__unix__)
@@ -35,12 +48,13 @@ void gotoxy(const int x, const int y);
     #error "Unsupported platform. Cannot define CLEAR_SCREEN()."
 #endif
 
+// ENTER_VALUE
 #if defined(_WIN32) || defined(_WIN64)
     #define ENTER_VALUE 13
 #elif defined(__unix__)
-    #define ENTER_VALUE 13
+    #define ENTER_VALUE 10
 #else
-    #error "Unsupported platform. Cannot define values for keys."
+    #error "Unsupported platform. Cannot define values for enter."
 #endif  
 
 

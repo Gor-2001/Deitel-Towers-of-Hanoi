@@ -12,7 +12,7 @@ public:
 private:
 
     void process(Towers& towers) const;
-    void exit() const;
+    bool exit(Towers& towers) const;
     void help(const Towers& towers) const;
     bool win(const Towers& towers) const;
 

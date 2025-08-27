@@ -14,9 +14,19 @@ void Game::start() const {
         << std::endl;
 
     char ch;
-    do {
-        ch = _getch();
-    } while (ch != ENTER_VALUE);
+    bool flag;
+
+    flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if (ch == ENTER_VALUE) {
+                flag = false;
+            }
+        }
+    }
 
     CLEAR_SCREEN();
 
@@ -27,9 +37,17 @@ void Game::start() const {
         "'r' for random start."
         << std::endl;
 
-    do {
-        ch = _getch();
-    } while (ch != 'b' && ch != 'r' && ch != ENTER_VALUE);
+    flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if (ch == 'b' || ch == 'r' || ch == ENTER_VALUE) {
+                flag = false;
+            }
+        }
+    }
 
     CLEAR_SCREEN();
 
@@ -42,9 +60,17 @@ void Game::start() const {
         "To start the game, enter the number from 1 to 9 to enter the disks count."
         << std::endl;
 
-    do {
-        ch = _getch();
-    } while ((ch > '9' || ch < '1') && ch != ENTER_VALUE);
+    flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if ((ch >= '1' && ch <= '9') || ch == ENTER_VALUE) {
+                flag = false;
+            }
+        }
+    }
 
     CLEAR_SCREEN();
 
@@ -60,11 +86,11 @@ void Game::process(Towers& towers) const {
     volatile int ch; // Use volatile to prevent compiler optimizations
     
     while (true) {
-        if (_kbhit()) {
-            ch = _getch();
+        if (_KBHIT()) {
+            ch = __GET_CH();
 
             switch (ch) {
-                
+
             // Validate
             case ENTER_VALUE:
                 if (win(towers))
@@ -73,8 +99,9 @@ void Game::process(Towers& towers) const {
 
             // Escape
             case 27:
-                exit();
-                return;
+                if(exit(towers));
+                    return;
+                break;
 
             // Move Left (a)
             case 'a':
@@ -110,10 +137,37 @@ void Game::process(Towers& towers) const {
 }
 
 
-void Game::exit() const {
+bool Game::exit(Towers& towers) const {
 
     CLEAR_SCREEN();
-    std::cout << "ESC pressed. Exiting.\n";
+
+    std::cout <<
+        "Do you really want to escape the game ? If yes press y if not press n."
+        << std::endl;
+
+    char ch;
+    bool flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if (ch == 'n' || ch == 'y') {
+                flag = false;
+            }
+        }
+    }
+
+    if(ch == 'n') {
+        CLEAR_SCREEN();
+        towers.displayTowers();
+        return false;
+    }
+    else {
+        CLEAR_SCREEN();
+        std::cout << "ESC pressed. Exiting.\n";
+        return true;
+    }
 }
 
 bool Game::win(const Towers& towers) const {
@@ -156,9 +210,17 @@ void Game::help(const Towers& towers) const {
 
     // Wait for the 'h' key to be pressed to exit help mode
     char ch;
-    do {
-        ch = _getch();
-    } while (ch != 'h');
+    bool flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if (ch == 'h') {
+                flag = false;
+            }
+        }
+    }
 
     // Clear the help screen and redraw the game state
     CLEAR_SCREEN();
