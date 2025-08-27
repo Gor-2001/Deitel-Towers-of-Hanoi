@@ -11,9 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
-# Find the ncurses library
-find_package(Curses REQUIRED)
-
 # Find all source files in the 'src' directory
 file(GLOB_RECURSE SOURCE_FILES
      "${SOURCE_DIR}/*.cpp")
@@ -24,10 +21,15 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 # Add the include directory so the compiler can find the headers
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${INCLUDE_DIR}
-    ${CURSES_INCLUDE_DIR}  # Add the ncurses include path
 )
 
-# Link the executable with the ncurses library
-target_link_libraries(${PROJECT_NAME} PUBLIC
-    ${CURSES_LIBRARIES}
-)
+# Conditional compilation for ncurses on Linux
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(Curses REQUIRED)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CURSES_INCLUDE_DIR}
+    )
+    target_link_libraries(${PROJECT_NAME} PUBLIC
+        ${CURSES_LIBRARIES}
+    )
+endif()

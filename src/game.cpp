@@ -1,81 +1,65 @@
 #include "game.h"
 
+char waitForInput(
+    const std::string& message,
+    const std::string& allowedChars
+) {
+
+    CLEAR_SCREEN();
+    std::cout << message << std::endl;
+
+    char ch;
+    bool flag = true;
+
+    while (flag) {
+        if (_KBHIT()) {
+            ch = __GET_CH();
+
+            if (allowedChars.find(ch) != std::string::npos) {
+                flag = false;
+            }
+        }
+    }
+
+    CLEAR_SCREEN();
+
+    return ch;
+}
+
 void Game::start() const {
 
     unsigned int disk_count = 3;
     gameStartingMode_t game_starting_mode = gameStartingModeBasic;
-
-    CLEAR_SCREEN();
-
-    //Starting instructions
-    std::cout <<
-        "To continue the game, press Enter. "
-        "Also during the game, if you need help, press the 'h' key."
-        << std::endl;
-
     char ch;
-    bool flag;
+    std::string allowedChars;
+    std::string message;
 
-    flag = true;
+    
+    allowedChars.push_back(ENTER_VALUE);
+    message = "To continue the game, press Enter. "
+        "Also during the game, if you need help, press the 'h' key.";
 
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            if (ch == ENTER_VALUE) {
-                flag = false;
-            }
-        }
-    }
-
-    CLEAR_SCREEN();
+    waitForInput(message, allowedChars);
 
 
-    // Enter game starting mode
-    std::cout <<
-        "To continue the game, press 'b' for basic start and "
-        "'r' for random start."
-        << std::endl;
+    allowedChars = "rb";
+    allowedChars.push_back(ENTER_VALUE);
+    message = "To continue the game, press 'b' for basic start and "
+        "'r' for random start.";
 
-    flag = true;
-
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            if (ch == 'b' || ch == 'r' || ch == ENTER_VALUE) {
-                flag = false;
-            }
-        }
-    }
-
-    CLEAR_SCREEN();
-
+    ch = waitForInput(message, allowedChars);
     if (ch == 'r')
         game_starting_mode = gameStartingModeRandom;
 
 
-    // Enter Disk Count
-    std::cout <<
-        "To start the game, enter the number from 1 to 9 to enter the disks count."
-        << std::endl;
+    allowedChars = "123456789";
+    allowedChars.push_back(ENTER_VALUE);
+    message = "To start the game, enter the number from 1 to 9 to enter the disks count.";
 
-    flag = true;
-
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            if ((ch >= '1' && ch <= '9') || ch == ENTER_VALUE) {
-                flag = false;
-            }
-        }
-    }
-
-    CLEAR_SCREEN();
-
+    ch = waitForInput(message, allowedChars);
     if(ch >= '1' && ch <= '9')
         disk_count = ch - '0';
+
 
     // Tower Init and start the game
     Towers towers(disk_count, game_starting_mode);
@@ -99,7 +83,7 @@ void Game::process(Towers& towers) const {
 
             // Escape
             case 27:
-                if(exit(towers));
+                if(exit(towers))
                     return;
                 break;
 
@@ -139,25 +123,14 @@ void Game::process(Towers& towers) const {
 
 bool Game::exit(Towers& towers) const {
 
-    CLEAR_SCREEN();
-
-    std::cout <<
-        "Do you really want to escape the game ? If yes press y if not press n."
-        << std::endl;
-
     char ch;
-    bool flag = true;
+    std::string allowedChars;
+    std::string message;
 
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
+    allowedChars = "ny";
+    message = "Do you really want to escape the game ? If yes press y if not press n.";
 
-            if (ch == 'n' || ch == 'y') {
-                flag = false;
-            }
-        }
-    }
-
+    ch = waitForInput(message, allowedChars);
     if(ch == 'n') {
         CLEAR_SCREEN();
         towers.displayTowers();
@@ -184,45 +157,27 @@ bool Game::win(const Towers& towers) const {
 
 void Game::help(const Towers& towers) const {
 
-    // Clear the screen and display help
-    CLEAR_SCREEN();
+    std::string allowedChars;
+    std::string message;
 
-    std::cout << "NAME\n";
-    std::cout << "\tTowers of Hanoi - a command-line puzzle game\n\n";
+    allowedChars = "h";
+    message = "NAME\n"
+    "\tTowers of Hanoi - a command-line puzzle game\n\n"
+    "SYNOPSIS\n"
+    "\tMove all disks from the left tower to the right tower.\n\n"
+    "CONTROLS\n"
+    "\tTo move the cursor between towers:\n"
+    "\t\t'd' or Right Arrow: Move cursor to the right\n"
+    "\t\t'a' or Left Arrow: Move cursor to the left\n"
+    "\t\t'u' or Up Arrow: Pick up a disk\n"
+    "\t\t's' or Down Arrow: Place a disk\n"
+    "\t\t'q' or ESC: Quit the game\n"
+    "\t\t'h': Show this help menu\n\n"
+    "\tTo validate a move:\n"
+    "\t\tEnter: Validate your position and win if all disks are in the correct order.\n\n"
+    "EXIT\n"
+    "\tPress 'h' to return to the game.\n\n";
 
-    std::cout << "SYNOPSIS\n";
-    std::cout << "\tMove all disks from the left tower to the right tower.\n\n";
-
-    std::cout << "CONTROLS\n";
-    std::cout << "\tTo move the cursor between towers:\n";
-    std::cout << "\t\t'd' or Right Arrow: Move cursor to the right\n";
-    std::cout << "\t\t'a' or Left Arrow: Move cursor to the left\n";
-    std::cout << "\t\t'u' or Up Arrow: Pick up a disk\n";
-    std::cout << "\t\t's' or Down Arrow: Place a disk\n";
-    std::cout << "\t\t'q' or ESC: Quit the game\n";
-    std::cout << "\t\t'h': Show this help menu\n\n";
-
-    std::cout << "\tTo validate a move:\n";
-    std::cout << "\t\tEnter: Validate your position and win if all disks are in the correct order.\n\n";
-
-    std::cout << "EXIT\n";
-    std::cout << "\tPress 'h' to return to the game.\n\n";
-
-    // Wait for the 'h' key to be pressed to exit help mode
-    char ch;
-    bool flag = true;
-
-    while (flag) {
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            if (ch == 'h') {
-                flag = false;
-            }
-        }
-    }
-
-    // Clear the help screen and redraw the game state
-    CLEAR_SCREEN();
+    waitForInput(message, allowedChars);
     towers.displayTowers();
 }
