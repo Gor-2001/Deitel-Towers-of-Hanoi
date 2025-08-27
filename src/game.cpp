@@ -57,12 +57,6 @@ void Game::process(Canvas& canvas) const {
                     return;
                 break;
 
-            // Escape
-            case 27:
-                if(exit(canvas))
-                    return;
-                break;
-
             // Move Left (a)
             case 'a':
                 canvas.cursorMoveLeft();
@@ -76,6 +70,12 @@ void Game::process(Canvas& canvas) const {
             // Open help window (h)
             case 'h':
                 help(canvas);
+                break;
+
+             // Quite the game (q)
+            case 'q':
+                if (exit(canvas))
+                    return;
                 break;
 
             // Move Down (s)
@@ -104,7 +104,7 @@ bool Game::exit(const Canvas& canvas) const {
     std::string message;
 
     allowedChars = "ny";
-    message = "Do you really want to escape the game ? If yes press y if not press n.";
+    message = "Do you really want to escape the game ? If yes, press 'y'.If not, press 'n'.";
 
     ch = waitForInput(message, allowedChars);
     if(ch == 'n') {
@@ -114,7 +114,7 @@ bool Game::exit(const Canvas& canvas) const {
     }
     else {
         CLEAR_SCREEN();
-        std::cout << "ESC pressed. Exiting.\n";
+        std::cout << "Exiting.\n";
         return true;
     }
 }
@@ -144,11 +144,11 @@ void Game::help(const Canvas& canvas) const {
     "\tMove all disks to the right tower.\n\n"
     "CONTROLS\n"
     "\tTo move the cursor between towers:\n"
-    "\t\t'd' Move cursor to the right\n"
-    "\t\t'a' Move cursor to the left\n"
-    "\t\t'u' Pick up a disk\n"
-    "\t\t's' Place a disk\n"
-    "\t\t ESC: Quit the game\n"
+    "\t\t'd': Move cursor to the right\n"
+    "\t\t'a': Move cursor to the left\n"
+    "\t\t'u': Pick up a disk\n"
+    "\t\t's': Place a disk\n"
+    "\t\t'q': Quit the game\n"
     "\t\t'h': Show this help menu\n\n"
     "\tTo validate a move:\n"
     "\t\tEnter: Validate your position and win if all disks are in the correct order.\n\n"
