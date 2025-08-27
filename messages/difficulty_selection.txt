@@ -1,0 +1,1 @@
+To start the game, enter the number from 1 to 9 to enter the disks count.

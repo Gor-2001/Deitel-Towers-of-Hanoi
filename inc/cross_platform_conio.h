@@ -6,9 +6,16 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <filesystem>
 
+namespace fs = std::filesystem;
+
+fs::path get_message_path(const std::string& filename);
+void print_file_content(const std::string& filename);
+char waitForInput(const std::string& allowedChars);
 void gotoxy(const int x, const int y);
-char waitForInput(const std::string& message, const std::string& allowedChars);
 void set_terminal_mode();
 void restore_terminal_mode();
 
@@ -35,6 +42,12 @@ void restore_terminal_mode();
 #else
     #error "Unsupported platform."
 #endif
+
+#define GRADING_INSTRUCTIONS   "grading_instructions.txt"
+#define HELP_GUIDE             "help_guide.txt"
+#define ESCAPE_WARNING         "escape_warning.txt"
+#define START_MODE_SELECTION   "start_mode_selection.txt"
+#define DIFFICULTY_SELECTION   "difficulty_selection.txt"
 
 
 #endif // CROSS_PLATFORM_CONIO_H

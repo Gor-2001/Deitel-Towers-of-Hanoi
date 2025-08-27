@@ -1,0 +1,20 @@
+NAME
+	Towers of Hanoi - a command-line puzzle game
+
+SYNOPSIS
+	Move all disks to the right tower.
+
+CONTROLS
+	To move the cursor between towers:
+		'd': Move cursor to the right
+		'a': Move cursor to the left
+		'u': Pick up a disk
+		's': Place a disk
+		'q': Quit the game
+		'h': Show this help menu
+		To validate a move:
+		Enter: Validate your position and win if all disks are in the correct order.
+
+EXIT
+	Press 'h' to return to the game.
+

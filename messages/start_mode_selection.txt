@@ -1,0 +1,1 @@
+To continue the game, press 'b' for basic start and 'r' for random start.

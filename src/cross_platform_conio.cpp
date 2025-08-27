@@ -36,14 +36,37 @@ void restore_terminal_mode() {
     #endif
 }
 
+fs::path get_message_path(const std::string& filename) {
+    fs::path base = fs::path(__FILE__).parent_path();
+    fs::path full = base / "../messages" / filename;
+    return full.lexically_normal();
+}
 
-char waitForInput(
-    const std::string& message,
-    const std::string& allowedChars
-) {
+void print_file_content(const std::string& filename) {
 
     CLEAR_SCREEN();
-    std::cout << message << std::endl;
+    fs::path message_path = get_message_path(filename);
+
+    // Check if file exists
+    if (!fs::exists(message_path)) {
+        std::cerr << "Error: File does not exist: " << message_path << std::endl;
+        return;
+    }
+
+    std::ifstream file(message_path);
+    if (!file.is_open()) {
+        std::cerr << "Error: Cannot open file: " << message_path << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::cout << line << '\n';
+    }
+}
+
+
+char waitForInput(const std::string& allowedChars) {
 
     char ch;
     bool flag = true;

@@ -1,0 +1,1 @@
+Do you really want to escape the game ? If yes, press 'y'. If not, press 'n'.
