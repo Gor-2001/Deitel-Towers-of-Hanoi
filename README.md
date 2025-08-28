@@ -1,22 +1,29 @@
 # Deitel Towers of Hanoi
 
-A C++ implementation of the classic **Towers of Hanoi** puzzle, inspired by the *Deitel C++ Book*.  
-This project uses **CMake** for building and supports **Windows** and **Linux**.
-
----
-
-## Features
-
-- Multiple game modes based on:
-  - Number of disks.
-  - Starting positions of disks.
-- Interactive gameplay with on-screen instructions.
-- Cross-platform support.
-- Easy to extend or modify for different variations of the game.
-
----
+A C++ implementation of the classic **Towers of Hanoi** puzzle, inspired by the *Deitel C++ Book*. This project uses **CMake** for building and supports **Windows** and **Linux**.
 
 ***
+
+## ✨ Features
+
+- **Multiple game modes** based on:
+  - Number of disks.
+  - Starting positions of disks.
+- **Interactive gameplay** with on-screen instructions.
+- **Cross-platform support**.
+- Easy to extend or modify for different variations of the game.
+
+***
+
+## 🎮 Gameplay Instructions
+
+Follow the on-screen prompts to select the number of disks and the starting positions. Use the keys shown during the game to control it.
+
+## 📝 Notes
+
+- **Tested on Windows** with Visual Studio.
+- **Linux support** requires the `ncurses` library.
+- Designed for educational purposes and to demonstrate C++ concepts from Deitel's book.
 
 ## 🛠️ Building the Project
 
@@ -64,13 +71,13 @@ The executable is located in the `out/Debug/` directory.
 ```bash
 out\Debug\DeitelTowersOfHanoi.exe
 
-### Gameplay Instructions: Follow the on-screen prompts to select number of disks, and starting positions. Use the keys shown during the game to control it.
+### Linux 🐧
 
-### Notes: Tested on Windows with Visual Studio. Linux support requires ncurses. Designed for educational purposes and to demonstrate C++ concepts from Deitel's book.
+The executable is located directly in the out/ directory.
 
-## Project Structure
+```bash
+./out/DeitelTowersOfHanoi
 
-```mermaid
 flowchart TD
     A[cross_platform_conio.h] --> B[canvas.h]
     B --> C[game.h]
