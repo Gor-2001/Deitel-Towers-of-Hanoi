@@ -83,3 +83,33 @@ flowchart TD
     B --> C[game.h]
     C --> D[hanoi_tower.h]
     D --> E[main.cpp]
+
+
+
+
+
+
+
+## Running the Executable
+
+Once the project is successfully built, you can run the executable from the terminal.
+
+### Windows
+
+The executable is located in the out/Debug/ directory.
+out\Debug\DeitelTowersOfHanoi.exe
+
+### Linux
+
+The executable is located directly in the out/ directory.
+./out/DeitelTowersOfHanoi
+
+---
+
+## Project Structure
+
+flowchart TD
+    A[cross_platform_conio.h] --> B[canvas.h]
+    B --> C[game.h]
+    C --> D[hanoi_tower.h]
+    D --> E[main.cpp]
