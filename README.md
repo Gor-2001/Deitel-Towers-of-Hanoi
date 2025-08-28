@@ -76,10 +76,11 @@ The executable is located directly in the out/ directory.
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-flowchart TD
-    A[cross_platform_conio.h] --> B[canvas.h]
-    B --> C[game.h]
-    C --> D[hanoi_tower.h]
-    D --> E[main.cpp]
+```mermaid
+graph TD
+    cross_platform_conio.h --> canvas.h
+    canvas.h --> game.h
+    game.h --> hanoi_tower.h
+    hanoi_tower.h --> main.cpp
