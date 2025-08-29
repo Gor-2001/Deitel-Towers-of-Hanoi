@@ -1,1 +1,2 @@
-To continue the game, press Enter.  Also during the game, if you need help, press the 'h' key.
+To continue the game, press Enter.
+If you need help during the game, press the 'h' key.

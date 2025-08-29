@@ -1,1 +1,3 @@
-To continue the game, press 'b' for basic start and 'r' for random start.
+To continue the game, choose a start mode:
+    'b' - Basic start
+    'r' - Random start
