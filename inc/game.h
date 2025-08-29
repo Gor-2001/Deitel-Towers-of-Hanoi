@@ -12,7 +12,7 @@ public:
 private:
 
     Canvas canvas;
-    void makeNextMove(const unsigned int pause_time_ms = 500);
+    void makeNextMove(unsigned long pause_time_ms = 500);
     void process();
     void help() const;
     bool win() const;

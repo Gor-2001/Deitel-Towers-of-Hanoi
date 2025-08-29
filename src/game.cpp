@@ -150,7 +150,7 @@ bool Game::exit() const {
 }
 
 
-void Game::makeNextMove(unsigned int pause_time_ms) {
+void Game::makeNextMove(unsigned long pause_time_ms) {
 
     canvas.printNextMove();
     
@@ -197,6 +197,9 @@ void Game::solveConcluding() {
 }
 
 void Game::solveInitial() {
+
+    if(!canvas.isInitialStat())
+        return;
 
     position_t src = positionLeft;
     position_t aux = positionMiddle;

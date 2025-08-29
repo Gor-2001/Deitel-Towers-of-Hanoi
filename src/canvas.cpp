@@ -34,12 +34,6 @@ void Canvas::displayCanvas() const {
     printFullLines();
 }
 
-bool Canvas::canMove(position_t src, position_t dst) const {
-    if (towers[src].empty()) return false;
-    if (towers[dst].empty()) return true;
-    return towers[src].back() < towers[dst].back();
-}
-
 void Canvas::findNextMove() {
 
     // If a disk is currently "in hand", temporarily put it back
@@ -176,6 +170,25 @@ bool Canvas::isWinningPosition() const {
     towersAreValid();
 
     return true;
+}
+
+bool Canvas::isInitialStat() const {
+
+    if (upperDiskSize)
+        return false;
+
+    if (towers[0].size() != disksCount || towers[1].size() || towers[2].size())
+        return false;
+
+    towersAreValid();
+
+    return true;
+}
+
+bool Canvas::canMove(position_t src, position_t dst) const {
+    if (towers[src].empty()) return false;
+    if (towers[dst].empty()) return true;
+    return towers[src].back() < towers[dst].back();
 }
 
 /*****************************************************************************/
@@ -401,10 +414,10 @@ void Canvas::towersInitRandom() {
 
 /*****************************************************************************/
 
-bool Canvas::towerIsMonotone(std::vector<unsigned int> vec) const {
+bool Canvas::towerIsMonotone(std::vector<unsigned int> tower) const {
 
-    for (unsigned int i = 1; i < vec.size(); ++i) {
-        if (vec[i - 1] <= vec[i])
+    for (unsigned int i = 1; i < tower.size(); ++i) {
+        if (tower[i - 1] <= tower[i])
             return false;
     }
 
@@ -449,19 +462,19 @@ void Canvas::towersAreValid() const {
         assert(temp[i] == (i + 1) && "Incorrect tower disks\n");
 }
 
-void Canvas::diskPick(const position_t cursor_position, const unsigned int ms) {
+void Canvas::diskPick(const position_t cursor_position, const unsigned long ms) {
     cursorMoveToPos(cursor_position, ms);
     diskMoveUp();
     SLEEP(ms);
 }
 
-void Canvas::diskPut(const position_t cursor_position, const unsigned int ms) {
+void Canvas::diskPut(const position_t cursor_position, const unsigned long ms) {
     cursorMoveToPos(cursor_position, ms);
     diskMoveDown();
     SLEEP(ms);
 }
 
-void Canvas::cursorMoveToPos(const position_t cursor_position, const unsigned int ms) {
+void Canvas::cursorMoveToPos(const position_t cursor_position, const unsigned long ms) {
     switch (cursorPosition)
     {
     case positionLeft:

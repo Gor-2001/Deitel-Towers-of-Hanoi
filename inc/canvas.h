@@ -67,11 +67,11 @@ public:
 
     void diskPick(
         const position_t cursorPosition,
-        const unsigned int ms = 0);
+        const unsigned long ms = 0);
 
     void diskPut(
         const position_t cursorPosition,
-        const unsigned int ms = 0);
+        const unsigned long ms = 0);
 
     // Solution
     void findNextMove();
@@ -94,6 +94,7 @@ public:
     // Validation functions
     bool isWinningPosition() const;
     bool canMove(position_t src, position_t dst) const;
+    bool isInitialStat() const;
 
 
 private:
@@ -130,13 +131,13 @@ private:
     void towersInitRandom();
 
     // Validation functions
-    bool towerIsMonotone(std::vector<unsigned int> vec) const;
+    bool towerIsMonotone(std::vector<unsigned int> tower) const;
     void towersAreValid() const;
 
     // Movement functions
     void cursorMoveToPos(
         const position_t cursor_position,
-        const unsigned int ms = 0);
+        const unsigned long ms = 0);
 
 };
 
