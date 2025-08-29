@@ -2,7 +2,7 @@
 
 /*****************************************************************************/
 
-Canvas::Canvas(
+void Canvas::CanvasInit(
     const unsigned int disks_count, 
     const gameStartingMode_t game_starting_mode) {
 
@@ -32,6 +32,50 @@ void Canvas::displayCanvas() const {
     printCursor();
     printEmptyLines();
     printFullLines();
+}
+
+bool Canvas::canMove(cursorPosition_t src, cursorPosition_t dst) const {
+    if (tower[src].empty()) return false;
+    if (tower[dst].empty()) return true;
+    return tower[src].back() < tower[dst].back();
+}
+
+void Canvas::findNextMove() {
+
+    // If a disk is currently "in hand", temporarily put it back
+    if (upperDiskSize)
+        tower[cursorPosition].push_back(upperDiskSize);
+    srand(static_cast<unsigned int>(time(NULL)));
+
+    while (true)
+    {
+        unsigned int i = rand() % 3;
+        unsigned int j = rand() % 3;
+
+        if(i != j && canMove((cursorPosition_t)j, (cursorPosition_t)i)) {
+            nextMove = { (cursorPosition_t)j, (cursorPosition_t)i};
+
+            // Remove temporarily added disk if needed
+            if (upperDiskSize)
+                tower[cursorPosition].pop_back();
+            return;
+        }
+    }
+
+    // If a disk is currently "in hand", temporarily put it back
+    if (upperDiskSize)
+        tower[cursorPosition].push_back(upperDiskSize);
+
+    nextMove = {cursorPositionLeft, cursorPositionRight};
+}
+
+/*****************************************************************************/
+
+void Canvas::printNextMove() const {
+
+    gotoxy(0, getNextMoveY());
+    std::cout <<
+        "The next move is " << nextMove.src + 1 << " to " << nextMove.dst + 1 << std::endl;
 }
 
 /*****************************************************************************/
@@ -132,6 +176,24 @@ bool Canvas::isWinningPosition() const {
     towersAreValid();
 
     return true;
+}
+
+/*****************************************************************************/
+
+unsigned int Canvas::getDisksCount() const {
+    return disksCount;
+}
+
+unsigned int Canvas::getUpperDiskSize() const {
+    return upperDiskSize;
+}
+
+cursorPosition_t Canvas::getCursorPosition() const {
+    return cursorPosition;
+}
+
+nextMove_t Canvas::getNextMove() const {
+    return nextMove;
 }
 
 /*****************************************************************************/
@@ -282,16 +344,16 @@ void Canvas::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
 
 /*****************************************************************************/
 
-unsigned int Canvas::getDisksCount() const{
-    return disksCount;
-}
-
 unsigned int Canvas::getCursorY() const{
     return CEIL_HIGH + getDisksCount() + 1;
 }
 
-unsigned int Canvas::getUpperDiskY() {
+unsigned int Canvas::getUpperDiskY() const {
     return UPPER_DISK_Y;
+}
+
+unsigned int  Canvas::getNextMoveY() const {
+    return CEIL_HIGH + FLOOR_HIGH + disksCount;
 }
 
 /*****************************************************************************/
@@ -327,7 +389,8 @@ void Canvas::towersInitBasic() {
 }
 
 void Canvas::towersInitRandom() {
-    
+    srand(static_cast<unsigned int>(time(NULL)));
+
     for (size_t i = 0; i < disksCount; i++)
         tower[rand() % 3].push_back(disksCount - i);
 }
@@ -380,4 +443,78 @@ void Canvas::towersAreValid() const {
     sort(temp.begin(), temp.end());
     for (unsigned int i = 0; i < temp.size(); ++i)
         assert(temp[i] == (i + 1) && "Incorrect tower disks\n");
+}
+
+void Canvas::diskPick(const cursorPosition_t cursor_position, const unsigned int ms) {
+    cursorMoveToPos(cursor_position, ms);
+    diskMoveUp();
+    SLEEP(ms);
+}
+
+void Canvas::diskPut(const cursorPosition_t cursor_position, const unsigned int ms) {
+    cursorMoveToPos(cursor_position, ms);
+    diskMoveDown();
+    SLEEP(ms);
+}
+
+void Canvas::cursorMoveToPos(const cursorPosition_t cursor_position, const unsigned int ms) {
+    switch (cursorPosition)
+    {
+    case cursorPositionLeft:
+        switch (cursor_position)
+        {
+        case cursorPositionLeft:
+            break;
+        case cursorPositionMiddle:
+            cursorMoveRight();
+            break;
+        case cursorPositionRight:
+            cursorMoveRight();
+            SLEEP(ms);
+            cursorMoveRight();
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case cursorPositionMiddle:
+        switch (cursor_position)
+        {
+        case cursorPositionLeft:
+            cursorMoveLeft();
+            break;
+        case cursorPositionMiddle:
+            break;
+        case cursorPositionRight:
+            cursorMoveRight();
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case cursorPositionRight:
+        switch (cursor_position)
+        {
+        case cursorPositionLeft:
+            cursorMoveLeft();
+            SLEEP(ms);
+            cursorMoveLeft();
+            break;
+        case cursorPositionMiddle:
+            cursorMoveLeft();
+            break;
+        case cursorPositionRight:
+            break;
+        default:
+            break;
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    SLEEP(ms);
 }

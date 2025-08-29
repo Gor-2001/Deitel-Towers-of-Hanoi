@@ -12,9 +12,13 @@ CONTROLS
 		's': Place a disk
 		'q': Quit the game
 		'h': Show this help menu
+
+		'm': Make the next move automatically using the solver
+		'n': Show a hint for the next move 
+		(Note: the last part may sometimes be inaccurate due to the complexity of the algorithm)
+
 		To validate a move:
 		Enter: Validate your position and win if all disks are in the correct order.
 
 EXIT
 	Press 'h' to return to the game.
-
