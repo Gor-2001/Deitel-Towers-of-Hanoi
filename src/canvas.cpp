@@ -7,7 +7,7 @@ void Canvas::CanvasInit(
     const gameStartingMode_t game_starting_mode) {
 
     setDisksCount(disks_count);
-    setCursorPosition(cursorPositionLeft);
+    setCursorPosition(positionLeft);
     setDiskPosition(diskPositionDown);
     setUpperDiskSize(0);
     setGameStartingMode(game_starting_mode);
@@ -34,17 +34,17 @@ void Canvas::displayCanvas() const {
     printFullLines();
 }
 
-bool Canvas::canMove(cursorPosition_t src, cursorPosition_t dst) const {
-    if (tower[src].empty()) return false;
-    if (tower[dst].empty()) return true;
-    return tower[src].back() < tower[dst].back();
+bool Canvas::canMove(position_t src, position_t dst) const {
+    if (towers[src].empty()) return false;
+    if (towers[dst].empty()) return true;
+    return towers[src].back() < towers[dst].back();
 }
 
 void Canvas::findNextMove() {
 
     // If a disk is currently "in hand", temporarily put it back
     if (upperDiskSize)
-        tower[cursorPosition].push_back(upperDiskSize);
+        towers[cursorPosition].push_back(upperDiskSize);
     srand(static_cast<unsigned int>(time(NULL)));
 
     while (true)
@@ -52,21 +52,21 @@ void Canvas::findNextMove() {
         unsigned int i = rand() % 3;
         unsigned int j = rand() % 3;
 
-        if(i != j && canMove((cursorPosition_t)j, (cursorPosition_t)i)) {
-            nextMove = { (cursorPosition_t)j, (cursorPosition_t)i};
+        if(i != j && canMove((position_t)j, (position_t)i)) {
+            nextMove = { (position_t)j, (position_t)i};
 
             // Remove temporarily added disk if needed
             if (upperDiskSize)
-                tower[cursorPosition].pop_back();
+                towers[cursorPosition].pop_back();
             return;
         }
     }
 
     // If a disk is currently "in hand", temporarily put it back
     if (upperDiskSize)
-        tower[cursorPosition].push_back(upperDiskSize);
+        towers[cursorPosition].push_back(upperDiskSize);
 
-    nextMove = {cursorPositionLeft, cursorPositionRight};
+    nextMove = {positionLeft, positionRight};
 }
 
 /*****************************************************************************/
@@ -83,11 +83,11 @@ void Canvas::printNextMove() const {
 void Canvas::cursorMoveRight() {
 
     switch (cursorPosition) {
-    case cursorPositionLeft:
-        setCursorPosition(cursorPositionMiddle);
+    case positionLeft:
+        setCursorPosition(positionMiddle);
         break;
-    case cursorPositionMiddle:
-        setCursorPosition(cursorPositionRight);
+    case positionMiddle:
+        setCursorPosition(positionRight);
         break;
     default:
         return;
@@ -103,11 +103,11 @@ void Canvas::cursorMoveRight() {
 void Canvas::cursorMoveLeft() {
 
     switch (cursorPosition) {
-    case cursorPositionRight:
-        setCursorPosition(cursorPositionMiddle);
+    case positionRight:
+        setCursorPosition(positionMiddle);
         break;
-    case cursorPositionMiddle:
-        setCursorPosition(cursorPositionLeft);
+    case positionMiddle:
+        setCursorPosition(positionLeft);
         break;
     default:
         return;
@@ -122,7 +122,7 @@ void Canvas::cursorMoveLeft() {
 
 void Canvas::diskMoveUp() {
 
-    if (tower[cursorPosition].empty())
+    if (towers[cursorPosition].empty())
         return;
 
     if (diskPosition == diskPositionDown)
@@ -130,14 +130,14 @@ void Canvas::diskMoveUp() {
     else
         return;
 
-    setUpperDiskSize(tower[cursorPosition].back());
-    tower[cursorPosition].pop_back();
+    setUpperDiskSize(towers[cursorPosition].back());
+    towers[cursorPosition].pop_back();
 
     gotoxy(0, getUpperDiskY());
     printUpperDisk();
 
-    gotoxy(0, CEIL_HIGH + disksCount - (tower[cursorPosition].size() + 1));
-    printDiskByIndex(tower[cursorPosition].size());
+    gotoxy(0, CEIL_HIGH + disksCount - (towers[cursorPosition].size() + 1));
+    printDiskByIndex(towers[cursorPosition].size());
 }
 
 void Canvas::diskMoveDown() {
@@ -145,7 +145,7 @@ void Canvas::diskMoveDown() {
     if (!upperDiskSize)
         return;
 
-    if (!tower[cursorPosition].empty() && upperDiskSize > tower[cursorPosition].back())
+    if (!towers[cursorPosition].empty() && upperDiskSize > towers[cursorPosition].back())
         return;
 
     if (diskPosition == diskPositionUp)
@@ -153,14 +153,14 @@ void Canvas::diskMoveDown() {
     else
         return;
 
-    tower[cursorPosition].push_back(upperDiskSize);
+    towers[cursorPosition].push_back(upperDiskSize);
     setUpperDiskSize(0);
 
     gotoxy(0, getUpperDiskY());
     printUpperDisk();
 
-    gotoxy(0, CEIL_HIGH + disksCount - tower[cursorPosition].size());
-    printDiskByIndex(tower[cursorPosition].size() - 1);
+    gotoxy(0, CEIL_HIGH + disksCount - towers[cursorPosition].size());
+    printDiskByIndex(towers[cursorPosition].size() - 1);
 }
 
 /*****************************************************************************/
@@ -170,7 +170,7 @@ bool Canvas::isWinningPosition() const {
     if (upperDiskSize)
         return false;
 
-    if (tower[0].size() || tower[1].size() || tower[2].size() != disksCount)
+    if (towers[0].size() || towers[1].size() || towers[2].size() != disksCount)
         return false;
 
     towersAreValid();
@@ -188,7 +188,7 @@ unsigned int Canvas::getUpperDiskSize() const {
     return upperDiskSize;
 }
 
-cursorPosition_t Canvas::getCursorPosition() const {
+position_t Canvas::getCursorPosition() const {
     return cursorPosition;
 }
 
@@ -250,9 +250,9 @@ void Canvas::printUpperDisk() const {
 
 void Canvas::printDiskByIndex(const unsigned int index) const {
 
-    const unsigned int leftDiskWidth = tower[0].size() > index ? tower[0][index] : 0;
-    const unsigned int middleDiskWidth = tower[1].size() > index ? tower[1][index] : 0;
-    const unsigned int rightDiskWidth  = tower[2].size() > index ? tower[2][index] : 0;
+    const unsigned int leftDiskWidth = towers[0].size() > index ? towers[0][index] : 0;
+    const unsigned int middleDiskWidth = towers[1].size() > index ? towers[1][index] : 0;
+    const unsigned int rightDiskWidth  = towers[2].size() > index ? towers[2][index] : 0;
     
     // The wall 
     printString("#  ", 1);
@@ -326,7 +326,7 @@ void Canvas::setDisksCount(const unsigned int disks_count) {
     disksCount = disks_count;
 }
 
-void Canvas::setCursorPosition(const cursorPosition_t cursor_position) {
+void Canvas::setCursorPosition(const position_t cursor_position) {
     cursorPosition = cursor_position;
 }
 
@@ -340,6 +340,10 @@ void Canvas::setUpperDiskSize(const unsigned int upper_disk_size) {
 
 void Canvas::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
     gameStartingMode = game_starting_mode;
+}
+
+void Canvas::setNextMove(const nextMove_t next_move) {
+    nextMove = next_move;
 }
 
 /*****************************************************************************/
@@ -359,9 +363,9 @@ unsigned int  Canvas::getNextMoveY() const {
 /*****************************************************************************/
 
 void Canvas::towersClear() {
-    tower[0].clear();
-    tower[1].clear();
-    tower[2].clear();
+    towers[0].clear();
+    towers[1].clear();
+    towers[2].clear();
 }
 
 
@@ -385,14 +389,14 @@ void Canvas::towersInit() {
 void Canvas::towersInitBasic() {
 
     for (size_t i = 0; i < disksCount; i++)
-        tower[0].push_back(disksCount - i);
+        towers[0].push_back(disksCount - i);
 }
 
 void Canvas::towersInitRandom() {
     srand(static_cast<unsigned int>(time(NULL)));
 
     for (size_t i = 0; i < disksCount; i++)
-        tower[rand() % 3].push_back(disksCount - i);
+        towers[rand() % 3].push_back(disksCount - i);
 }
 
 /*****************************************************************************/
@@ -410,7 +414,7 @@ bool Canvas::towerIsMonotone(std::vector<unsigned int> vec) const {
 void Canvas::towersAreValid() const {
 
     assert(
-        (cursorPosition >= cursorPositionMin && cursorPosition <= cursorPositionMax) &&
+        (cursorPosition >= positionMin && cursorPosition <= positionMax) &&
         "Cursor Position is invalid");
 
     assert(
@@ -420,20 +424,20 @@ void Canvas::towersAreValid() const {
     std::vector<unsigned int> temp;
 
     assert(
-        towerIsMonotone((std::vector<unsigned int>)tower[0]) &&
+        towerIsMonotone((std::vector<unsigned int>)towers[0]) &&
         "Left tower disks are not monotone\n");
 
     assert(
-        towerIsMonotone((std::vector<unsigned int>)tower[1]) &&
+        towerIsMonotone((std::vector<unsigned int>)towers[1]) &&
         "Middle tower disks are not monotone\n");
 
     assert(
-        towerIsMonotone((std::vector<unsigned int>)tower[2]) &&
+        towerIsMonotone((std::vector<unsigned int>)towers[2]) &&
         "Right tower disks are not monotone\n");
 
-    temp.insert(temp.end(), tower[0].begin(), tower[0].end());
-    temp.insert(temp.end(), tower[1].begin(), tower[1].end());
-    temp.insert(temp.end(), tower[2].begin(), tower[2].end());
+    temp.insert(temp.end(), towers[0].begin(), towers[0].end());
+    temp.insert(temp.end(), towers[1].begin(), towers[1].end());
+    temp.insert(temp.end(), towers[2].begin(), towers[2].end());
     
     if(upperDiskSize)
         temp.push_back(upperDiskSize);
@@ -445,30 +449,30 @@ void Canvas::towersAreValid() const {
         assert(temp[i] == (i + 1) && "Incorrect tower disks\n");
 }
 
-void Canvas::diskPick(const cursorPosition_t cursor_position, const unsigned int ms) {
+void Canvas::diskPick(const position_t cursor_position, const unsigned int ms) {
     cursorMoveToPos(cursor_position, ms);
     diskMoveUp();
     SLEEP(ms);
 }
 
-void Canvas::diskPut(const cursorPosition_t cursor_position, const unsigned int ms) {
+void Canvas::diskPut(const position_t cursor_position, const unsigned int ms) {
     cursorMoveToPos(cursor_position, ms);
     diskMoveDown();
     SLEEP(ms);
 }
 
-void Canvas::cursorMoveToPos(const cursorPosition_t cursor_position, const unsigned int ms) {
+void Canvas::cursorMoveToPos(const position_t cursor_position, const unsigned int ms) {
     switch (cursorPosition)
     {
-    case cursorPositionLeft:
+    case positionLeft:
         switch (cursor_position)
         {
-        case cursorPositionLeft:
+        case positionLeft:
             break;
-        case cursorPositionMiddle:
+        case positionMiddle:
             cursorMoveRight();
             break;
-        case cursorPositionRight:
+        case positionRight:
             cursorMoveRight();
             SLEEP(ms);
             cursorMoveRight();
@@ -478,15 +482,15 @@ void Canvas::cursorMoveToPos(const cursorPosition_t cursor_position, const unsig
         }
         break;
 
-    case cursorPositionMiddle:
+    case positionMiddle:
         switch (cursor_position)
         {
-        case cursorPositionLeft:
+        case positionLeft:
             cursorMoveLeft();
             break;
-        case cursorPositionMiddle:
+        case positionMiddle:
             break;
-        case cursorPositionRight:
+        case positionRight:
             cursorMoveRight();
             break;
         default:
@@ -494,18 +498,18 @@ void Canvas::cursorMoveToPos(const cursorPosition_t cursor_position, const unsig
         }
         break;
 
-    case cursorPositionRight:
+    case positionRight:
         switch (cursor_position)
         {
-        case cursorPositionLeft:
+        case positionLeft:
             cursorMoveLeft();
             SLEEP(ms);
             cursorMoveLeft();
             break;
-        case cursorPositionMiddle:
+        case positionMiddle:
             cursorMoveLeft();
             break;
-        case cursorPositionRight:
+        case positionRight:
             break;
         default:
             break;

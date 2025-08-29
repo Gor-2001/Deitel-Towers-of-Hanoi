@@ -13,13 +13,13 @@
 #define UPPER_DISK_Y 4
 #define FLOOR_HIGH 4
 
-enum cursorPosition_t 
+enum position_t 
 { 
-    cursorPositionMin       = 0, 
-    cursorPositionLeft      = cursorPositionMin, 
-    cursorPositionMiddle    = cursorPositionLeft + 1,
-    cursorPositionRight     = cursorPositionMiddle + 1,
-    cursorPositionMax       = cursorPositionRight,
+    positionMin       = 0, 
+    positionLeft      = positionMin, 
+    positionMiddle    = positionLeft + 1,
+    positionRight     = positionMiddle + 1,
+    positionMax       = positionRight,
 };
 
 enum diskPosition_t
@@ -40,8 +40,8 @@ enum gameStartingMode_t
 
 struct nextMove_t
 {
-    cursorPosition_t src;
-    cursorPosition_t dst;
+    position_t src;
+    position_t dst;
 };
 
 class Canvas
@@ -66,11 +66,11 @@ public:
     void diskMoveDown();
 
     void diskPick(
-        const cursorPosition_t cursorPosition,
+        const position_t cursorPosition,
         const unsigned int ms = 0);
 
     void diskPut(
-        const cursorPosition_t cursorPosition,
+        const position_t cursorPosition,
         const unsigned int ms = 0);
 
     // Solution
@@ -79,11 +79,21 @@ public:
     //Get functions
     unsigned int getDisksCount() const;
     unsigned int getUpperDiskSize() const;
-    cursorPosition_t getCursorPosition() const;
+    position_t getCursorPosition() const;
     nextMove_t getNextMove() const;
+    std::vector<unsigned int> getTowers() const;
+
+    // Set functions
+    void setDisksCount(const unsigned int disks_count);
+    void setCursorPosition(const position_t cursor_position);
+    void setDiskPosition(const diskPosition_t disk_position);
+    void setUpperDiskSize(const unsigned int upper_disk_size);
+    void setGameStartingMode(const gameStartingMode_t game_starting_mode);
+    void setNextMove(const nextMove_t next_move);
 
     // Validation functions
     bool isWinningPosition() const;
+    bool canMove(position_t src, position_t dst) const;
 
 
 private:
@@ -91,8 +101,8 @@ private:
     // Variables
     unsigned int disksCount;
     unsigned int upperDiskSize;
-    cursorPosition_t cursorPosition;
-    std::vector<unsigned int> tower[3];
+    position_t cursorPosition;
+    std::vector<unsigned int> towers[3];
     diskPosition_t diskPosition;
     gameStartingMode_t gameStartingMode;
     nextMove_t nextMove;
@@ -108,13 +118,6 @@ private:
     void printTowersBase() const;
     void printCursor() const;
 
-    // Set functions
-    void setDisksCount(const unsigned int disks_count);
-    void setCursorPosition(const cursorPosition_t cursor_position);
-    void setDiskPosition(const diskPosition_t disk_position);
-    void setUpperDiskSize(const unsigned int upper_disk_size);
-    void setGameStartingMode(const gameStartingMode_t game_starting_mode);
-
     // Calculation functions
     unsigned int getCursorY() const;
     unsigned int getUpperDiskY() const;
@@ -129,11 +132,10 @@ private:
     // Validation functions
     bool towerIsMonotone(std::vector<unsigned int> vec) const;
     void towersAreValid() const;
-    bool canMove(cursorPosition_t src, cursorPosition_t dst) const;
 
     // Movement functions
     void cursorMoveToPos(
-        const cursorPosition_t cursor_position,
+        const position_t cursor_position,
         const unsigned int ms = 0);
 
 };
