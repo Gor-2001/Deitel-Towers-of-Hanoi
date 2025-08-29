@@ -57,15 +57,19 @@ void Game::process() {
                 canvas.cursorMoveLeft();
                 break;
 
-            // Solving Concluding Stat(c)
+            // Solving concluding stat (c)
             case 'c':
                 solveConcluding();
+                if (win())
+                    return;
                 break;
 
             // Solve for initial (i)
             case 'i':
                 solveInitial();
-                return;
+                if (win())
+                    return;
+                break;
 
             // Move Right (d)
             case 'd':
@@ -218,7 +222,6 @@ void Game::solveInitial() {
     if (disks_count % 2 == 0)
         std::swap(aux, dest);
 
-
     for (int i = 1; i <= totalMoves && animation; i++)
     {
         switch (i % 3)
@@ -265,6 +268,4 @@ void Game::solveInitial() {
             }
         }
     }
-
-    win();
 }
