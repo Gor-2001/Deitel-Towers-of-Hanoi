@@ -1,5 +1,5 @@
-#ifndef TOWER_H
-#define TOWER_H
+#ifndef CANVAS_H
+#define CANVAS_H
 
 #include <vector>
 #include <cassert>
@@ -44,6 +44,14 @@ struct nextMove_t
     position_t dst;
 };
 
+struct subproblemData_t
+{
+    position_t src;
+    position_t aux;
+    position_t dst;
+    unsigned int diskCount;
+};
+
 class Canvas
 {
 public:
@@ -74,14 +82,15 @@ public:
         const unsigned long ms = 0);
 
     // Solution
-    void findNextMove();
+    void findNextMoveRandom();
+    void determineSubProblem();
+    void upperDiskReset();
 
     //Get functions
     unsigned int getDisksCount() const;
     unsigned int getUpperDiskSize() const;
     position_t getCursorPosition() const;
     nextMove_t getNextMove() const;
-    std::vector<unsigned int> getTowers() const;
 
     // Set functions
     void setDisksCount(const unsigned int disks_count);
@@ -92,10 +101,10 @@ public:
     void setNextMove(const nextMove_t next_move);
 
     // Validation functions
-    bool isWinningPosition() const;
+    bool isProblemSolved() const;
+    bool isSubproblemSolved() const;
     bool canMove(position_t src, position_t dst) const;
     bool isInitialStat() const;
-
 
 private:
 
@@ -106,7 +115,9 @@ private:
     std::vector<unsigned int> towers[3];
     diskPosition_t diskPosition;
     gameStartingMode_t gameStartingMode;
+
     nextMove_t nextMove;
+    subproblemData_t subproblemData;
 
     // Input and output functions
     void printString(std::string string, const unsigned int count, bool endl) const;
@@ -120,9 +131,9 @@ private:
     void printCursor() const;
 
     // Calculation functions
-    unsigned int getCursorY() const;
-    unsigned int getUpperDiskY() const;
-    unsigned int getNextMoveY() const;
+    unsigned int calcCursorY() const;
+    unsigned int calcUpperDiskY() const;
+    unsigned int calcNextMoveY() const;
 
     // Towers filling and cleaning functions
     void towersClear();
@@ -141,4 +152,4 @@ private:
 
 };
 
-#endif
+#endif // CANVAS_H

@@ -17,8 +17,10 @@ private:
     void help() const;
     bool win() const;
     bool exit() const;
+    void solveConcludingRandom();
     void solveConcluding();
     void solveInitial();
+    void solve();
 };
 
 #endif // GAME_H
