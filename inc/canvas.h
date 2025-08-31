@@ -49,7 +49,7 @@ struct subproblemData_t
     position_t src;
     position_t aux;
     position_t dst;
-    unsigned int diskCount;
+    unsigned int disksCount;
 };
 
 class Canvas
@@ -82,15 +82,20 @@ public:
         const unsigned long ms = 0);
 
     // Solution
-    void findNextMoveRandom();
     void determineSubProblem();
     void upperDiskReset();
 
+    // Validation functions
+    bool isProblemSolved() const;
+    bool isInitialStat() const;
+    bool canMove(position_t src, position_t dst) const;
+
     //Get functions
-    unsigned int getDisksCount() const;
-    unsigned int getUpperDiskSize() const;
-    position_t getCursorPosition() const;
-    nextMove_t getNextMove() const;
+    unsigned int        getDisksCount() const;
+    unsigned int        getUpperDiskSize() const;
+    position_t          getCursorPosition() const;
+    nextMove_t          getNextMove() const;
+    subproblemData_t    getSubproblemData() const;
 
     // Set functions
     void setDisksCount(const unsigned int disks_count);
@@ -100,22 +105,22 @@ public:
     void setGameStartingMode(const gameStartingMode_t game_starting_mode);
     void setNextMove(const nextMove_t next_move);
 
-    // Validation functions
-    bool isProblemSolved() const;
-    bool isSubproblemSolved() const;
-    bool canMove(position_t src, position_t dst) const;
-    bool isInitialStat() const;
-
 private:
 
     // Variables
+    // Towers
     unsigned int disksCount;
-    unsigned int upperDiskSize;
-    position_t cursorPosition;
     std::vector<unsigned int> towers[3];
+    
+    // Upper Disk
+    unsigned int upperDiskSize;
     diskPosition_t diskPosition;
+    
+    //Stat
+    position_t cursorPosition;
     gameStartingMode_t gameStartingMode;
 
+    // Solution
     nextMove_t nextMove;
     subproblemData_t subproblemData;
 
@@ -149,7 +154,6 @@ private:
     void cursorMoveToPos(
         const position_t cursor_position,
         const unsigned long ms = 0);
-
 };
 
 #endif // CANVAS_H

@@ -34,92 +34,6 @@ void Canvas::displayCanvas() const {
     printFullLines();
 }
 
-void Canvas::findNextMoveRandom() {
-
-    // If a disk is currently "in hand", temporarily put it back
-    upperDiskReset();
-    srand(static_cast<unsigned int>(time(NULL)));
-
-    while (true) {
-        unsigned int i = rand() % 3;
-        unsigned int j = rand() % 3;
-
-        if(i != j && canMove((position_t)j, (position_t)i)) {
-            nextMove = { (position_t)j, (position_t)i};
-
-            // Remove temporarily added disk if needed
-            if (upperDiskSize)
-                towers[cursorPosition].pop_back();
-            return;
-        }
-    }
-
-    nextMove = {positionLeft, positionRight};
-}
-
-void Canvas::upperDiskReset() {
-    // Find 1 pos (src)
-    for (int i = 0; i < 3 && upperDiskSize; ++i) {
-        if (towers[(cursorPosition + i) % 3].back() > upperDiskSize)
-            diskPut(position_t((cursorPosition + i) % 3));
-    }
-}
-
-void Canvas::determineSubProblem() {
-
-    subproblemData_t data;
-    memset(&data, 0, sizeof(data));
-    bool flag = true;
-    unsigned int count;
-    unsigned int size;
-
-    // Find src
-    for (int i = 0; i < 3 && flag; ++i) {
-        if (towers[i].size() && towers[i].back() == 1) {
-            data.src = (position_t)i;
-            flag = false;
-        }
-    }
-
-    // Find disk count
-    count = 1;
-    flag = true;
-    size = towers[data.src].size();
-    while (flag && count < size) {
-        if (count > size && towers[data.src][size - count] > towers[data.src][size - count - 1] + 1)
-            flag = false;
-        ++count;
-    }
-
-    data.diskCount = count;
-
-    // Find dst
-    if (count != disksCount) {
-        flag = true;
-        for (int i = 0; i < 3 && flag; ++i) {
-            if (towers[i].size() && towers[i].back() == count + 1) {
-                data.dst = (position_t)i;
-                flag = false;
-            }
-        }
-    }
-    else
-        data.dst = (position_t)2;
-           
-    // Find aux
-    flag = true;
-    for (int i = 0; i < 3 && flag; ++i) {
-        if ((position_t)i != data.src && (position_t)i != data.dst) {
-            data.aux = (position_t)i;
-            flag = false;
-        }
-    }
-
-    subproblemData = data;
-}
-
-/*****************************************************************************/
-
 void Canvas::printNextMove() const {
 
     gotoxy(0, calcNextMoveY());
@@ -212,6 +126,88 @@ void Canvas::diskMoveDown() {
     printDiskByIndex(towers[cursorPosition].size() - 1);
 }
 
+void Canvas::diskPick(const position_t cursor_position, const unsigned long ms) {
+    cursorMoveToPos(cursor_position, ms);
+    diskMoveUp();
+    SLEEP(ms);
+}
+
+void Canvas::diskPut(const position_t cursor_position, const unsigned long ms) {
+    cursorMoveToPos(cursor_position, ms);
+    diskMoveDown();
+    SLEEP(ms);
+}
+
+/*****************************************************************************/
+
+void Canvas::determineSubProblem() {
+
+    if (isInitialStat()) {
+        subproblemData = { positionLeft, positionMiddle, positionRight, disksCount };
+        return;
+    }
+
+    subproblemData_t data;
+    memset(&data, 0, sizeof(data));
+    bool flag = true;
+    unsigned int count;
+    unsigned int size;
+
+    // Find src
+    for (int i = 0; i < 3 && flag; ++i) {
+        if (towers[i].size() && towers[i].back() == 1) {
+            data.src = (position_t)i;
+            flag = false;
+        }
+    }
+
+    // Find disk count
+    count = 1;
+    flag = true;
+    size = towers[data.src].size();
+    while (flag && count < size) {
+        if (count > size || towers[data.src][size - count] + 1 < towers[data.src][size - count - 1])
+            flag = false;
+        else
+            ++count;
+    }
+
+    data.disksCount = count;
+
+    // Find dst
+    if (count != disksCount) {
+        flag = true;
+        for (int i = 0; i < 3 && flag; ++i) {
+            if (towers[i].size() && towers[i].back() == count + 1) {
+                data.dst = (position_t)i;
+                flag = false;
+            }
+        }
+    }
+    else
+        data.dst = (position_t)2;
+
+    // Find aux
+    flag = true;
+    for (int i = 0; i < 3 && flag; ++i) {
+        if ((position_t)i != data.src && (position_t)i != data.dst) {
+            data.aux = (position_t)i;
+            flag = false;
+        }
+    }
+
+    subproblemData = data;
+}
+
+void Canvas::upperDiskReset() {
+    // Find 1 pos (src)
+    for (int i = 0; i < 3 && upperDiskSize; ++i) {
+        position_t pos = (position_t)((cursorPosition + i) % 3);
+        if (towers[pos].empty() || towers[pos].back() > upperDiskSize)
+            diskPut(pos);
+    }
+}
+
 /*****************************************************************************/
 
 bool Canvas::isProblemSolved() const {
@@ -225,15 +221,6 @@ bool Canvas::isProblemSolved() const {
     towersAreValid();
 
     return true;
-}
-
-bool Canvas::isSubproblemSolved() const {
-
-    towersAreValid();
-
-    return (!upperDiskSize &&
-        (!towers[subproblemData.src].size() || (towers[subproblemData.src].back() > subproblemData.diskCount)) &&
-        (!towers[subproblemData.aux].size() || (towers[subproblemData.aux].back() > subproblemData.diskCount)));
 }
 
 bool Canvas::isInitialStat() const {
@@ -271,6 +258,36 @@ position_t Canvas::getCursorPosition() const {
 
 nextMove_t Canvas::getNextMove() const {
     return nextMove;
+}
+
+subproblemData_t Canvas::getSubproblemData() const {
+    return subproblemData;
+}
+
+/*****************************************************************************/
+
+void Canvas::setDisksCount(const unsigned int disks_count) {
+    disksCount = disks_count;
+}
+
+void Canvas::setCursorPosition(const position_t cursor_position) {
+    cursorPosition = cursor_position;
+}
+
+void Canvas::setDiskPosition(const diskPosition_t disk_position) {
+    diskPosition = disk_position;
+}
+
+void Canvas::setUpperDiskSize(const unsigned int upper_disk_size) {
+    upperDiskSize = upper_disk_size;
+}
+
+void Canvas::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
+    gameStartingMode = game_starting_mode;
+}
+
+void Canvas::setNextMove(const nextMove_t next_move) {
+    nextMove = next_move;
 }
 
 /*****************************************************************************/
@@ -399,32 +416,6 @@ void Canvas::printCursor() const {
 
 /*****************************************************************************/
 
-void Canvas::setDisksCount(const unsigned int disks_count) {
-    disksCount = disks_count;
-}
-
-void Canvas::setCursorPosition(const position_t cursor_position) {
-    cursorPosition = cursor_position;
-}
-
-void Canvas::setDiskPosition(const diskPosition_t disk_position) {
-    diskPosition = disk_position;
-}
-
-void Canvas::setUpperDiskSize(const unsigned int upper_disk_size) {
-    upperDiskSize = upper_disk_size;
-}
-
-void Canvas::setGameStartingMode(const gameStartingMode_t game_starting_mode) {
-    gameStartingMode = game_starting_mode;
-}
-
-void Canvas::setNextMove(const nextMove_t next_move) {
-    nextMove = next_move;
-}
-
-/*****************************************************************************/
-
 unsigned int Canvas::calcCursorY() const{
     return CEIL_HIGH + getDisksCount() + 1;
 }
@@ -444,7 +435,6 @@ void Canvas::towersClear() {
     towers[1].clear();
     towers[2].clear();
 }
-
 
 void Canvas::towersInit() {
 
@@ -524,18 +514,6 @@ void Canvas::towersAreValid() const {
     sort(temp.begin(), temp.end());
     for (unsigned int i = 0; i < temp.size(); ++i)
         assert(temp[i] == (i + 1) && "Incorrect tower disks\n");
-}
-
-void Canvas::diskPick(const position_t cursor_position, const unsigned long ms) {
-    cursorMoveToPos(cursor_position, ms);
-    diskMoveUp();
-    SLEEP(ms);
-}
-
-void Canvas::diskPut(const position_t cursor_position, const unsigned long ms) {
-    cursorMoveToPos(cursor_position, ms);
-    diskMoveDown();
-    SLEEP(ms);
 }
 
 void Canvas::cursorMoveToPos(const position_t cursor_position, const unsigned long ms) {

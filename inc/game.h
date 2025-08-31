@@ -12,15 +12,17 @@ public:
 private:
 
     Canvas canvas;
-    void makeNextMove(unsigned long pause_time_ms = 500);
+
+    // Game control
     void process();
     void help() const;
     bool win() const;
     bool exit() const;
-    void solveConcludingRandom();
-    void solveConcluding();
-    void solveInitial();
+
+    // Solution
     void solve();
+    void solveInitial(unsigned int* pause_time_ms, char* ch);
+    void makeNextMove(unsigned long pause_time_ms = 500);
 };
 
 #endif // GAME_H

@@ -57,16 +57,9 @@ void Game::process() {
                 canvas.cursorMoveLeft();
                 break;
 
-            // Solving concluding stat (c)
-            case 'c':
-                solveConcluding();
-                if (win())
-                    return;
-                break;
-
-            // Solve for initial (i)
+            // Solving stat (i)
             case 'i':
-                solveInitial();
+                solve();
                 if (win())
                     return;
                 break;
@@ -80,17 +73,6 @@ void Game::process() {
             case 'h':
                 help();
                 break;
-
-            //// Make the next move (m)
-            //case 'm':
-            //    makeNextMove();
-            //    break;
-
-            //// Print the next move (n)
-            //case 'n':
-            //    canvas.findNextMoveRandom();
-            //    canvas.printNextMove();
-            //    break;
 
              // Quite the game (q)
             case 'q':
@@ -126,6 +108,7 @@ void Game::help() const {
 bool Game::win() const {
 
     if (canvas.isProblemSolved()) {
+        SLEEP(2000);
         CLEAR_SCREEN();
         std::cout << "You Win.\n";
         return true;
@@ -153,71 +136,29 @@ bool Game::exit() const {
     }
 }
 
+void Game::solve() {
 
-void Game::makeNextMove(unsigned long pause_time_ms) {
-
-    canvas.printNextMove();
-    
-    position_t cursor_position_curr = canvas.getCursorPosition();
-    nextMove_t next_move_curr = canvas.getNextMove();
-    unsigned int upper_disk_size = canvas.getUpperDiskSize();
-
-    if(upper_disk_size && next_move_curr.src != cursor_position_curr)
-        canvas.diskPut(cursor_position_curr, pause_time_ms);
-
-    canvas.diskPick(next_move_curr.src, pause_time_ms);
-    canvas.diskPut(next_move_curr.dst, pause_time_ms);
-}
-
-void Game::solveConcludingRandom() {
-
-    char ch;
-    bool flag = true;
     unsigned int pause_time_ms = 500;
-    canvas.upperDiskReset();
+    char ch = 0;
 
-    while (flag && !win()) {
-
-        canvas.findNextMoveRandom();
-        makeNextMove();
-
-        if (_KBHIT()) {
-            ch = __GET_CH();
-
-            switch (ch)
-            {
-            case 'o':
-                pause_time_ms /= 2;
-                break;
-            case 'u':
-                pause_time_ms *= 2;
-                break;
-            case 'x':
-                flag = false;
-                break;
-            default:
-                break;
-            }
-        }
+    while (!win() && ch != 'x') {
+        canvas.upperDiskReset();
+        canvas.determineSubProblem();
+        solveInitial(&pause_time_ms, &ch);
     }
 }
 
-void Game::solveInitial() {
+void Game::solveInitial(unsigned int* pause_time_ms, char* ch) {
 
-    canvas.upperDiskReset();
-    if(!canvas.isInitialStat())
-        return;
-
-    position_t src = positionLeft;
-    position_t aux = positionMiddle;
-    position_t dest = positionRight;
+    subproblemData_t data = canvas.getSubproblemData();
+    position_t src = data.src;
+    position_t aux = data.aux;
+    position_t dest = data.dst;
 
     nextMove_t nextMove;
-    char ch;
 
-    unsigned int disks_count = canvas.getDisksCount();
+    unsigned int disks_count = data.disksCount;
     unsigned int totalMoves = (1 << disks_count) - 1;
-    unsigned int pause_time_ms = 500;
     
     bool animation = true; 
 
@@ -242,26 +183,23 @@ void Game::solveInitial() {
         default:
             break;
         }
-        
-        canvas.setNextMove(nextMove);
-
-        if(!canvas.canMove(nextMove.src, nextMove.dst)) {
+       
+        if(!canvas.canMove(nextMove.src, nextMove.dst))
             std::swap(nextMove.src, nextMove.dst);
-            canvas.setNextMove(nextMove);
-        }
 
-        makeNextMove(pause_time_ms);
+        canvas.setNextMove(nextMove);
+        makeNextMove(*pause_time_ms);
 
         if (_KBHIT()) {
-            ch = __GET_CH();
+            *ch = __GET_CH();
 
-            switch (ch)
+            switch (*ch)
             {
             case 'o':
-                pause_time_ms /= 2;
+                *pause_time_ms /= 2;
                 break;
             case 'u':
-                pause_time_ms *= 2;
+                *pause_time_ms *= 2;
                 break;
             case 'x':
                 animation = false;
@@ -273,78 +211,17 @@ void Game::solveInitial() {
     }
 }
 
-void Game::solveConcluding() {
+void Game::makeNextMove(unsigned long pause_time_ms) {
 
-    while (!win()) {
+    canvas.printNextMove();
 
-        canvas.determineSubProblem();
-        while (canvas.isSubproblemSolved()) {
-            position_t src = positionLeft;
-            position_t aux = positionMiddle;
-            position_t dest = positionRight;
+    position_t cursor_position_curr = canvas.getCursorPosition();
+    nextMove_t next_move_curr = canvas.getNextMove();
+    unsigned int upper_disk_size = canvas.getUpperDiskSize();
 
-            nextMove_t nextMove;
-            char ch;
+    if (upper_disk_size && next_move_curr.src != cursor_position_curr)
+        canvas.diskPut(cursor_position_curr, pause_time_ms);
 
-            unsigned int disks_count = canvas.getDisksCount();
-            unsigned int totalMoves = (1 << disks_count) - 1;
-            unsigned int pause_time_ms = 500;
-
-            bool animation = true;
-
-
-            if (disks_count % 2 == 0)
-                std::swap(aux, dest);
-
-            for (int i = 1; i <= totalMoves && animation; i++)
-            {
-                switch (i % 3)
-                {
-                case 0:
-                    nextMove = { aux, dest };
-                    break;
-                case 1:
-                    nextMove = { src, dest };
-                    break;
-                case 2:
-                    nextMove = { src, aux };
-                    break;
-
-                default:
-                    break;
-                }
-
-                canvas.setNextMove(nextMove);
-
-                if (!canvas.canMove(nextMove.src, nextMove.dst)) {
-                    std::swap(nextMove.src, nextMove.dst);
-                    canvas.setNextMove(nextMove);
-                }
-
-                makeNextMove(pause_time_ms);
-
-                if (_KBHIT()) {
-                    ch = __GET_CH();
-
-                    switch (ch)
-                    {
-                    case 'o':
-                        pause_time_ms /= 2;
-                        break;
-                    case 'u':
-                        pause_time_ms *= 2;
-                        break;
-                    case 'x':
-                        animation = false;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return;
-
+    canvas.diskPick(next_move_curr.src, pause_time_ms);
+    canvas.diskPut(next_move_curr.dst, pause_time_ms);
 }
