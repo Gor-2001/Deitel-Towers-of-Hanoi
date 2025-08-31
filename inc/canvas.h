@@ -87,7 +87,6 @@ public:
 
     // Validation functions
     bool isProblemSolved() const;
-    bool isInitialStat() const;
     bool canMove(position_t src, position_t dst) const;
 
     //Get functions

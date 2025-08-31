@@ -144,11 +144,11 @@ void Game::solve() {
     while (!win() && ch != 'x') {
         canvas.upperDiskReset();
         canvas.determineSubProblem();
-        solveInitial(&pause_time_ms, &ch);
+        solveState(&pause_time_ms, &ch);
     }
 }
 
-void Game::solveInitial(unsigned int* pause_time_ms, char* ch) {
+void Game::solveState(unsigned int* pause_time_ms, char* ch) {
 
     subproblemData_t data = canvas.getSubproblemData();
     position_t src = data.src;

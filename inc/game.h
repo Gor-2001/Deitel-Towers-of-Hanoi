@@ -21,7 +21,7 @@ private:
 
     // Solution
     void solve();
-    void solveInitial(unsigned int* pause_time_ms, char* ch);
+    void solveState(unsigned int* pause_time_ms, char* ch);
     void makeNextMove(unsigned long pause_time_ms = 500);
 };
 

@@ -142,10 +142,17 @@ void Canvas::diskPut(const position_t cursor_position, const unsigned long ms) {
 
 void Canvas::determineSubProblem() {
 
-    if (isInitialStat()) {
+
+    if (towers[0].size() == disksCount) {
         subproblemData = { positionLeft, positionMiddle, positionRight, disksCount };
         return;
     }
+
+    if (towers[1].size() == disksCount) {
+        subproblemData = { positionMiddle, positionLeft, positionRight, disksCount };
+        return;
+    }
+    
 
     subproblemData_t data;
     memset(&data, 0, sizeof(data));
@@ -175,17 +182,13 @@ void Canvas::determineSubProblem() {
     data.disksCount = count;
 
     // Find dst
-    if (count != disksCount) {
-        flag = true;
-        for (int i = 0; i < 3 && flag; ++i) {
-            if (towers[i].size() && towers[i].back() == count + 1) {
-                data.dst = (position_t)i;
-                flag = false;
-            }
+    flag = true;
+    for (int i = 0; i < 3 && flag; ++i) {
+        if (towers[i].size() && towers[i].back() == count + 1) {
+            data.dst = (position_t)i;
+            flag = false;
         }
     }
-    else
-        data.dst = (position_t)2;
 
     // Find aux
     flag = true;
@@ -223,18 +226,18 @@ bool Canvas::isProblemSolved() const {
     return true;
 }
 
-bool Canvas::isInitialStat() const {
-
-    if (upperDiskSize)
-        return false;
-
-    if (towers[0].size() != disksCount || towers[1].size() || towers[2].size())
-        return false;
-
-    towersAreValid();
-
-    return true;
-}
+//bool Canvas::isInitialStat() const {
+//
+//    if (upperDiskSize)
+//        return false;
+//
+//    if (towers[0].size() != disksCount || towers[1].size() || towers[2].size())
+//        return false;
+//
+//    towersAreValid();
+//
+//    return true;
+//}
 
 bool Canvas::canMove(position_t src, position_t dst) const {
     if (towers[src].empty()) return false;
