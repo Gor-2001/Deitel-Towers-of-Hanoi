@@ -153,7 +153,6 @@ void Canvas::determineSubProblem() {
         return;
     }
     
-
     subproblemData_t data;
     memset(&data, 0, sizeof(data));
     bool flag = true;
